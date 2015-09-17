@@ -6,7 +6,7 @@
  */
 var common =
 	(function($) {
-		var com = {}
+		var com = {};
 			/**
 			 * @description 获取当前DOM的所有同类型兄弟结点
 			 * @param {Object} obj
