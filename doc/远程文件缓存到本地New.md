@@ -1,0 +1,174 @@
+##远程文件缓存到本地
+	update:更改了删除文件的方法
+	本文对plus.download做了简单的封装。通过common.cache.getFIle获取图片本地链接。
+    下载的代码块中没有指定下载的文件名及扩展名，我使用的是云服务器，获取的链接是没有文件扩展名的，故而没有做详细的限制。
+```javascript
+(function(com){
+	/**
+	 * 通过递归实现进程阻塞
+	 * 也可以使用async.js-->each
+ 	 * @param {Object} list
+	 * @param {Object} cb_exec
+ 	 * @param {Object} cb_end
+	 */
+	function myasync(list, cb_exec, cb_end) {
+		var each = function(_list, cb) {
+			if (_list.length < 1) {
+				return cb_end && cb_end();
+			}
+			cb(_list.shift(), function() {
+				each(list, cb);
+			})
+		}
+		each(list, cb_exec)
+	};
+
+	com.myasync = myasync;
+    var hashCode = function(str) {
+		var hash = 0;
+		if (!str || str.length == 0) return hash;
+		for (i = 0; i < str.length; i++) {
+			char = str.charCodeAt(i);
+			hash = ((hash << 5) - hash) + char;
+			hash = hash & hash; // Convert to 32bit integer
+		}
+		return hash;
+    };
+    com.hashCode=hashCode;
+	/**
+	 *存储当前下载路径
+	 */
+	var cache = {};
+	cache.getFile = function(netPath, cb) {
+		var filePathCache = getLocalFileCache(netPath);
+		isExist(filePathCache, function(exist) {
+			if (exist) {
+				console.log('EXIST_' + filePathCache)
+				cb(filePathCache);
+			} else {
+				console.log('UNEXIST_' + filePathCache + "_" + netPath)
+				Filedownload(netPath, function(localPath) {
+					cb(localPath);
+				});
+			}
+		});
+	};
+	/**
+	 * @description 检查文件是否存在
+	 */
+	var isExist = function(localpath, cb) {
+		if (!localpath) {
+			return cb(false);
+		}
+		plus.io.resolveLocalFileSystemURL(localpath, function() {
+			cb(true);
+		}, function() {
+			cb(false);
+		});
+	};
+	var couDwn = 0;
+	//下载
+	var Filedownload = function(netPath, callback) {
+		var dtask = plus.downloader.createDownload(netPath, {}, function(d, status) {
+			// 下载完成
+			if ( d.state == 4 && status == 200) {
+				plus.io.resolveLocalFileSystemURL(d.filename, function(entry) {
+					setLocalFileCache(netPath, entry.toLocalURL());
+					callback(entry.toLocalURL()); //获取当前下载路径
+				});
+			} else {
+				console.log('download.state:'+d.state+"____download.status"+status);
+				//下载失败 只递归一次，再次失败返回默认图片
+				if (++couDwn <= 1) {
+					console.log(couDwn);
+					arguments.callee(netPath, callback);
+				} else {
+					//重置
+					couDwn = 0;
+					//返回默认图片
+					callback(plus.io.convertLocalFileSystemURL("_www/images/default.png"));
+				}
+			}
+		});
+		//TODO 监听当前下载状态
+//		dtask.addEventListener( "statechanged", function(d, status){
+//			console.log(d.state);
+//		}, false );
+		dtask.start();
+	function getLocalFileCache(netPath) {
+		var FILE_CACHE_KEY = "filePathCache_" + common.hashCode(netPath);
+		var localUrlObj = myStorage.getItem(FILE_CACHE_KEY);
+		return localUrlObj;
+	};
+
+	function setLocalFileCache(netPath, localPath) {
+		var FILE_CACHE_KEY = "filePathCache_" + common.hashCode(netPath);
+		myStorage.setItem(FILE_CACHE_KEY, localPath);
+	};
+    /**
+	 * 清除本地文件及缓存
+	 */
+		cache.clear = function(cb) {
+		//没有手动设置下载路径，默认的下载路径是"/storage/sdcard0/Android/data/io.dcloud.HBuilder/.HBuilder/downloads/",相对路径如下
+//		plus.io.resolveLocalFileSystemURL("_downloads/", function(entry) {
+//			entry.removeRecursively(function() {
+//				myStorage.removeItemByKeys(null, function() {
+//					cb && cb();
+//				});
+//			}, function() {
+//				cb & cb(false);
+//			});
+//		}, function(e) {
+//			cb & cb(false);
+//		});
+		var waiting = plus.nativeUI.showWaiting('缓存清除中...');
+		plus.io.resolveLocalFileSystemURL("_downloads/", function(entry) {
+			var tmpcou=0;
+			var dirReader = entry.createReader();
+			dirReader.readEntries(function(entries) {
+				var flen = entries.length;
+				console.log("flen" + flen);
+				
+				com.myasync(entries, function(fl, next) {
+					if (fl.isFile) {
+						fl.remove(function(en) {
+							
+							waiting.setTitle('已清除'+(Math.floor(++tmpcou/flen*100))+'%')
+							next();
+						}, function(e) {
+							console.log(JSON.stringify(e));
+							next();
+						});
+					}
+				}, function() {
+					myStorage.removeItemByKeys(null, function() {
+						waiting.close();
+						cb && cb();
+					});
+				});
+
+			}, function(e) {
+				console.log(e);
+			});
+		}, function(e) {
+			console.log(e);
+		});
+	};
+	
+	/**
+	 *@description 查看已下载的文件
+	 */
+	cache.getDownloadFiles = function() {
+		plus.io.resolveLocalFileSystemURL("_downloads/", function(entry) {
+			console.log(entry.toLocalURL());
+			var rd = entry.createReader();
+			rd.readEntries(function(entries) {
+				entries.forEach(function(f, index, arr) {
+					console.log(f.name);
+				})
+			})
+		});
+	};
+	com.cache = cache;
+}(window.common={}))
+```
