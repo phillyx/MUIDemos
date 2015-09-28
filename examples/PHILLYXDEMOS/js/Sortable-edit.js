@@ -5,23 +5,20 @@
  */
 
 
-(function (factory) {
+(function(factory) {
 	"use strict";
 
 	if (typeof define === "function" && define.amd) {
 		define(factory);
-	}
-	else if (typeof module != "undefined" && typeof module.exports != "undefined") {
+	} else if (typeof module != "undefined" && typeof module.exports != "undefined") {
 		module.exports = factory();
-	}
-	else if (typeof Package !== "undefined") {
-		Sortable = factory();  // export for Meteor.js
-	}
-	else {
+	} else if (typeof Package !== "undefined") {
+		Sortable = factory(); // export for Meteor.js
+	} else {
 		/* jshint sub:true */
 		window["Sortable"] = factory();
 	}
-})(function () {
+})(function() {
 	"use strict";
 
 	var dragEl,
@@ -59,7 +56,7 @@
 		parseInt = win.parseInt,
 
 		supportDraggable = !!('draggable' in document.createElement('div')),
-		supportCssPointerEvents = (function (el) {
+		supportCssPointerEvents = (function(el) {
 			el = document.createElement('x');
 			el.style.cssText = 'pointer-events:auto';
 			return el.style.pointerEvents === 'auto';
@@ -72,7 +69,7 @@
 
 		touchDragOverListeners = [],
 
-		_autoScroll = _throttle(function (/**Event*/evt, /**Object*/options, /**HTMLElement*/rootEl) {
+		_autoScroll = _throttle(function( /**Event*/ evt, /**Object*/ options, /**HTMLElement*/ rootEl) {
 			// Bug: https://bugzilla.mozilla.org/show_bug.cgi?id=505521
 			if (rootEl && options.scroll) {
 				var el,
@@ -87,8 +84,7 @@
 					winHeight = window.innerHeight,
 
 					vx,
-					vy
-				;
+					vy;
 
 				// Delect scrollEl
 				if (scrollParentEl !== rootEl) {
@@ -134,7 +130,7 @@
 					clearInterval(autoScroll.pid);
 
 					if (el) {
-						autoScroll.pid = setInterval(function () {
+						autoScroll.pid = setInterval(function() {
 							if (el === win) {
 								win.scrollTo(win.pageXOffset + vx * speed, win.pageYOffset + vy * speed);
 							} else {
@@ -147,22 +143,23 @@
 			}
 		}, 30),
 
-		_prepareGroup = function (options) {
+		_prepareGroup = function(options) {
 			var group = options.group;
 
 			if (!group || typeof group != 'object') {
-				group = options.group = {name: group};
+				group = options.group = {
+					name: group
+				};
 			}
 
-			['pull', 'put'].forEach(function (key) {
+			['pull', 'put'].forEach(function(key) {
 				if (!(key in group)) {
 					group[key] = true;
 				}
 			});
 
 			options.groups = ' ' + group.name + (group.put.join ? ' ' + group.put.join(' ') : '') + ' ';
-		}
-	;
+		};
 
 
 
@@ -200,7 +197,7 @@
 			ignore: 'a, img',
 			filter: null,
 			animation: 0,
-			setData: function (dataTransfer, dragEl) {
+			setData: function(dataTransfer, dragEl) {
 				dataTransfer.setData('Text', dragEl.textContent);
 			},
 			dropBubble: false,
@@ -249,7 +246,7 @@
 	Sortable.prototype = /** @lends Sortable.prototype */ {
 		constructor: Sortable,
 
-		_onTapStart: function (/** Event|TouchEvent */evt) {
+		_onTapStart: function( /** Event|TouchEvent */ evt) {
 			var _this = this,
 				el = this.el,
 				options = this.options,
@@ -280,9 +277,8 @@
 					evt.preventDefault();
 					return; // cancel dnd
 				}
-			}
-			else if (filter) {
-				filter = filter.split(',').some(function (criteria) {
+			} else if (filter) {
+				filter = filter.split(',').some(function(criteria) {
 					criteria = _closest(originalTarget, criteria.trim(), el);
 
 					if (criteria) {
@@ -307,7 +303,7 @@
 			this._prepareDragStart(evt, touch, target);
 		},
 
-		_prepareDragStart: function (/** Event */evt, /** Touch */touch, /** HTMLElement */target) {
+		_prepareDragStart: function( /** Event */ evt, /** Touch */ touch, /** HTMLElement */ target) {
 			var _this = this,
 				el = _this.el,
 				options = _this.options,
@@ -323,7 +319,7 @@
 				nextEl = dragEl.nextSibling;
 				activeGroup = options.group;
 
-				dragStartFn = function () {
+				dragStartFn = function() {
 					// Delayed drag has been triggered
 					// we can re-enable the events: touchmove/mousemove
 					_this._disableDelayedDrag();
@@ -339,7 +335,7 @@
 				};
 
 				// Disable "draggable"
-				options.ignore.split(',').forEach(function (criteria) {
+				options.ignore.split(',').forEach(function(criteria) {
 					_find(dragEl, criteria.trim(), _disableDraggable);
 				});
 
@@ -364,7 +360,7 @@
 			}
 		},
 
-		_disableDelayedDrag: function () {
+		_disableDelayedDrag: function() {
 			var ownerDocument = this.el.ownerDocument;
 
 			clearTimeout(this._dragStartTimer);
@@ -375,7 +371,7 @@
 			_off(ownerDocument, 'touchmove', this._disableDelayedDrag);
 		},
 
-		_triggerDragStart: function (/** Touch */touch) {
+		_triggerDragStart: function( /** Touch */ touch) {
 			if (touch) {
 				// Touch device support
 				tapEvt = {
@@ -385,11 +381,9 @@
 				};
 
 				this._onDragStart(tapEvt, 'touch');
-			}
-			else if (!this.nativeDraggable) {
+			} else if (!this.nativeDraggable) {
 				this._onDragStart(tapEvt, true);
-			}
-			else {
+			} else {
 				_on(dragEl, 'dragend', this);
 				_on(rootEl, 'dragstart', this._onDragStart);
 			}
@@ -400,11 +394,10 @@
 				} else {
 					window.getSelection().removeAllRanges();
 				}
-			} catch (err) {
-			}
+			} catch (err) {}
 		},
 
-		_dragStarted: function () {
+		_dragStarted: function() {
 			if (rootEl && dragEl) {
 				// Apply effect
 				_toggleClass(dragEl, this.options.ghostClass, true);
@@ -416,7 +409,7 @@
 			}
 		},
 
-		_emulateDragOver: function () {
+		_emulateDragOver: function() {
 			if (touchEvt) {
 				if (this._lastX === touchEvt.clientX && this._lastY === touchEvt.clientY) {
 					return;
@@ -462,7 +455,7 @@
 		},
 
 
-		_onTouchMove: function (/**TouchEvent*/evt) {
+		_onTouchMove: function( /**TouchEvent*/ evt) {
 			if (tapEvt) {
 				// only set the status to dragging, when we are actually dragging
 				if (!Sortable.active) {
@@ -471,7 +464,6 @@
 
 				// as well as creating the ghost element on the document body
 				this._appendGhost();
-
 				var touch = evt.touches ? evt.touches[0] : evt,
 					dx = touch.clientX - tapEvt.clientX,
 					dy = touch.clientY - tapEvt.clientY,
@@ -479,7 +471,10 @@
 
 				moved = true;
 				touchEvt = touch;
-
+				//TODO 1020450921@qq.com add scale style
+				//translate3d+=ghostEl.style.transform.replace(/translate(3d|)\([\-\w\,\s]+\)/g,'');
+				translate3d+=' scale(1.2) ';
+				
 				_css(ghostEl, 'webkitTransform', translate3d);
 				_css(ghostEl, 'mozTransform', translate3d);
 				_css(ghostEl, 'msTransform', translate3d);
@@ -489,7 +484,7 @@
 			}
 		},
 
-		_appendGhost: function () {
+		_appendGhost: function() {
 			if (!ghostEl) {
 				var rect = dragEl.getBoundingClientRect(),
 					css = _css(dragEl),
@@ -518,7 +513,7 @@
 			}
 		},
 
-		_onDragStart: function (/**Event*/evt, /**boolean*/useFallback) {
+		_onDragStart: function( /**Event*/ evt, /**boolean*/ useFallback) {
 			var dataTransfer = evt.dataTransfer,
 				options = this.options;
 
@@ -544,8 +539,7 @@
 				}
 
 				this._loopId = setInterval(this._emulateDragOver, 50);
-			}
-			else {
+			} else {
 				if (dataTransfer) {
 					dataTransfer.effectAllowed = 'move';
 					options.setData && options.setData.call(this, dataTransfer, dragEl);
@@ -556,7 +550,7 @@
 			}
 		},
 
-		_onDragOver: function (/**Event*/evt) {
+		_onDragOver: function( /**Event*/ evt) {
 			var el = this.el,
 				target,
 				dragRect,
@@ -575,8 +569,7 @@
 			moved = true;
 
 			if (activeGroup && !options.disabled &&
-				(isOwner
-					? canSort || (revert = !rootEl.contains(dragEl)) // Reverting item into the original list
+				(isOwner ? canSort || (revert = !rootEl.contains(dragEl)) // Reverting item into the original list
 					: activeGroup.pull && groupPut && (
 						(activeGroup.name === group.name) || // by Name
 						(groupPut.indexOf && ~groupPut.indexOf(activeGroup.name)) // by Array
@@ -599,8 +592,7 @@
 
 					if (cloneEl || nextEl) {
 						rootEl.insertBefore(dragEl, cloneEl || nextEl);
-					}
-					else if (!canSort) {
+					} else if (!canSort) {
 						rootEl.appendChild(dragEl);
 					}
 
@@ -631,8 +623,7 @@
 						this._animate(dragRect, dragEl);
 						target && this._animate(targetRect, target);
 					}
-				}
-				else if (target && !target.animated && target !== dragEl && (target.parentNode[expando] !== void 0)) {
+				} else if (target && !target.animated && target !== dragEl && (target.parentNode[expando] !== void 0)) {
 					if (lastEl !== target) {
 						lastEl = target;
 						lastCSS = _css(target);
@@ -643,15 +634,13 @@
 					var targetRect = target.getBoundingClientRect(),
 						width = targetRect.right - targetRect.left,
 						height = targetRect.bottom - targetRect.top,
-						floating = /left|right|inline/.test(lastCSS.cssFloat + lastCSS.display)
-							|| (lastParentCSS.display == 'flex' && lastParentCSS['flex-direction'].indexOf('row') === 0),
+						floating = /left|right|inline/.test(lastCSS.cssFloat + lastCSS.display) || (lastParentCSS.display == 'flex' && lastParentCSS['flex-direction'].indexOf('row') === 0),
 						isWide = (target.offsetWidth > dragEl.offsetWidth),
 						isLong = (target.offsetHeight > dragEl.offsetHeight),
 						halfway = (floating ? (evt.clientX - targetRect.left) / width : (evt.clientY - targetRect.top) / height) > 0.5,
 						nextSibling = target.nextElementSibling,
 						moveVector = _onMove(rootEl, el, dragEl, dragRect, target, targetRect),
-						after
-					;
+						after;
 
 					if (moveVector !== false) {
 						_silent = true;
@@ -661,8 +650,7 @@
 
 						if (moveVector === 1 || moveVector === -1) {
 							after = (moveVector === 1);
-						}
-						else if (floating) {
+						} else if (floating) {
 							var elTop = dragEl.offsetTop,
 								tgTop = target.offsetTop;
 
@@ -675,6 +663,14 @@
 							after = (nextSibling !== dragEl) && !isLong || halfway && isLong;
 						}
 
+						//TODO  102045091@qq.com 2015-09-28   对dragEl和tragetEl 间的兄弟元素添加动画;  add animation for  brother elements between dragEl and targetEl
+						var _this = this;
+						var brothers = getBetweenBrothers(dragEl, target);
+						var brothers_Rect = [];
+						brothers.forEach(function(bro, index) {
+							brothers_Rect.push(bro.getBoundingClientRect());
+						});
+
 						if (!dragEl.contains(el)) {
 							if (after && !nextSibling) {
 								el.appendChild(dragEl);
@@ -685,32 +681,38 @@
 
 						parentEl = dragEl.parentNode; // actualization
 
-						this._animate(dragRect, dragEl);
+						// TODO 102045091@qq.com 2015-09-24 添加自定义属性isDropAnimation以判断dragEl排序完成后有无动画
+						//Add a custom property isDropAnimation to determine if the animation is required after the dragDOM sort is finished
+
+						this.options.isDropAnimation &&
+							this._animate(dragRect, dragEl);
 						this._animate(targetRect, target);
+
+						brothers.forEach(function(bro, index) {
+							_this._animate(brothers_Rect[index], bro);
+						});
 					}
 				}
 			}
 		},
 
-		_animate: function (prevRect, target) {
+		_animate: function(prevRect, target) {
 			var ms = this.options.animation;
-
 			if (ms) {
 				var currentRect = target.getBoundingClientRect();
 
 				_css(target, 'transition', 'none');
-				_css(target, 'transform', 'translate3d('
-					+ (prevRect.left - currentRect.left) + 'px,'
-					+ (prevRect.top - currentRect.top) + 'px,0)'
-				);
+				_css(target, 'transform', 'translate3d(' + (prevRect.left - currentRect.left) + 'px,' + (prevRect.top - currentRect.top) + 'px,0)');
 
 				target.offsetWidth; // repaint
 
-				_css(target, 'transition', 'all ' + ms + 'ms');
+				//TODO edit 1020450921@qq.com 添加一定的延时
+				//Add a certain delay
+				_css(target, 'transition', 'all ' + ms + 'ms' + ' ease 200ms');
 				_css(target, 'transform', 'translate3d(0,0,0)');
 
 				clearTimeout(target.animated);
-				target.animated = setTimeout(function () {
+				target.animated = setTimeout(function() {
 					_css(target, 'transition', '');
 					_css(target, 'transform', '');
 					target.animated = false;
@@ -718,7 +720,7 @@
 			}
 		},
 
-		_offUpEvents: function () {
+		_offUpEvents: function() {
 			var ownerDocument = this.el.ownerDocument;
 
 			_off(document, 'touchmove', this._onTouchMove);
@@ -727,7 +729,7 @@
 			_off(ownerDocument, 'touchcancel', this._onDrop);
 		},
 
-		_onDrop: function (/**Event*/evt) {
+		_onDrop: function( /**Event*/ evt) {
 			var el = this.el,
 				options = this.options;
 
@@ -778,8 +780,7 @@
 							// Remove event
 							_dispatchEvent(this, rootEl, 'remove', dragEl, rootEl, oldIndex, newIndex);
 						}
-					}
-					else {
+					} else {
 						// Remove clone
 						cloneEl && cloneEl.parentNode.removeChild(cloneEl);
 
@@ -809,31 +810,31 @@
 
 				// Nulling
 				rootEl =
-				dragEl =
-				parentEl =
-				ghostEl =
-				nextEl =
-				cloneEl =
+					dragEl =
+					parentEl =
+					ghostEl =
+					nextEl =
+					cloneEl =
 
-				scrollEl =
-				scrollParentEl =
+					scrollEl =
+					scrollParentEl =
 
-				tapEvt =
-				touchEvt =
+					tapEvt =
+					touchEvt =
 
-				moved =
-				newIndex =
+					moved =
+					newIndex =
 
-				lastEl =
-				lastCSS =
+					lastEl =
+					lastCSS =
 
-				activeGroup =
-				Sortable.active = null;
+					activeGroup =
+					Sortable.active = null;
 			}
 		},
 
 
-		handleEvent: function (/**Event*/evt) {
+		handleEvent: function( /**Event*/ evt) {
 			var type = evt.type;
 
 			if (type === 'dragover' || type === 'dragenter') {
@@ -841,8 +842,7 @@
 					this._onDragOver(evt);
 					_globalDragOver(evt);
 				}
-			}
-			else if (type === 'drop' || type === 'dragend') {
+			} else if (type === 'drop' || type === 'dragend') {
 				this._onDrop(evt);
 			}
 		},
@@ -852,7 +852,7 @@
 		 * Serializes the item into an array of string.
 		 * @returns {String[]}
 		 */
-		toArray: function () {
+		toArray: function() {
 			var order = [],
 				el,
 				children = this.el.children,
@@ -875,10 +875,11 @@
 		 * Sorts the elements according to the array.
 		 * @param  {String[]}  order  order of the items
 		 */
-		sort: function (order) {
-			var items = {}, rootEl = this.el;
+		sort: function(order) {
+			var items = {},
+				rootEl = this.el;
 
-			this.toArray().forEach(function (id, i) {
+			this.toArray().forEach(function(id, i) {
 				var el = rootEl.children[i];
 
 				if (_closest(el, this.options.draggable, rootEl)) {
@@ -886,7 +887,7 @@
 				}
 			}, this);
 
-			order.forEach(function (id) {
+			order.forEach(function(id) {
 				if (items[id]) {
 					rootEl.removeChild(items[id]);
 					rootEl.appendChild(items[id]);
@@ -898,7 +899,7 @@
 		/**
 		 * Save the current sorting
 		 */
-		save: function () {
+		save: function() {
 			var store = this.options.store;
 			store && store.set(this);
 		},
@@ -910,7 +911,7 @@
 		 * @param   {String}       [selector]  default: `options.draggable`
 		 * @returns {HTMLElement|null}
 		 */
-		closest: function (el, selector) {
+		closest: function(el, selector) {
 			return _closest(el, selector || this.options.draggable, this.el);
 		},
 
@@ -921,7 +922,7 @@
 		 * @param   {*}      [value]
 		 * @returns {*}
 		 */
-		option: function (name, value) {
+		option: function(name, value) {
 			var options = this.options;
 
 			if (value === void 0) {
@@ -939,7 +940,7 @@
 		/**
 		 * Destroy
 		 */
-		destroy: function () {
+		destroy: function() {
 			var el = this.el;
 
 			el[expando] = null;
@@ -953,7 +954,7 @@
 			}
 
 			// Remove draggable attributes
-			Array.prototype.forEach.call(el.querySelectorAll('[draggable]'), function (el) {
+			Array.prototype.forEach.call(el.querySelectorAll('[draggable]'), function(el) {
 				el.removeAttribute('draggable');
 			});
 
@@ -964,7 +965,38 @@
 			this.el = el = null;
 		}
 	};
-
+	/**
+	 * @author 1020450921@qq.com 2015-09-28
+	 * @description 获取dragEl和tragetEl 间的兄弟元素;  get brother elements between dragEl and targetEl
+	 * @param {Object} dragEl
+	 * @param {Object} targetEl
+	 */
+	function getBetweenBrothers(dragEl, targetEl) {
+		//TODO 
+		var childs = dragEl.parentNode.children;
+		var arr = [],
+			begin, end;
+		var i = 0,
+			len = childs.length;
+		for (; i < len; i++) {
+			if (childs[i] === dragEl) {
+				begin = i;
+			}
+			if (childs[i] === targetEl) {
+				end = i;
+			}
+		}
+		var tmp = null;
+		if (begin > end) {
+			tmp = begin;
+			begin = end;
+			end = tmp;
+		}
+		for (i = begin + 1; i < end; i++) {
+			arr.push(childs[i]);
+		}
+		return tmp == null ? arr.reverse() : arr;
+	};
 
 	function _cloneHide(state) {
 		if (cloneEl && (cloneEl.state !== state)) {
@@ -975,7 +1007,7 @@
 	}
 
 
-	function _closest(/**HTMLElement*/el, /**String*/selector, /**HTMLElement*/ctx) {
+	function _closest( /**HTMLElement*/ el, /**String*/ selector, /**HTMLElement*/ ctx) {
 		if (el) {
 			ctx = ctx || document;
 			selector = selector.split('.');
@@ -1000,7 +1032,7 @@
 	}
 
 
-	function _globalDragOver(/**Event*/evt) {
+	function _globalDragOver( /**Event*/ evt) {
 		if (evt.dataTransfer) {
 			evt.dataTransfer.dropEffect = 'move';
 		}
@@ -1022,8 +1054,7 @@
 		if (el) {
 			if (el.classList) {
 				el.classList[state ? 'add' : 'remove'](name);
-			}
-			else {
+			} else {
 				var className = (' ' + el.className + ' ').replace(RSPACE, ' ').replace(' ' + name + ' ', ' ');
 				el.className = (className + (state ? ' ' + name : '')).replace(RSPACE, ' ');
 			}
@@ -1038,14 +1069,12 @@
 			if (val === void 0) {
 				if (document.defaultView && document.defaultView.getComputedStyle) {
 					val = document.defaultView.getComputedStyle(el, '');
-				}
-				else if (el.currentStyle) {
+				} else if (el.currentStyle) {
 					val = el.currentStyle;
 				}
 
 				return prop === void 0 ? val : val[prop];
-			}
-			else {
+			} else {
 				if (!(prop in style)) {
 					prop = '-webkit-' + prop;
 				}
@@ -1058,7 +1087,9 @@
 
 	function _find(ctx, tagName, iterator) {
 		if (ctx) {
-			var list = ctx.getElementsByTagName(tagName), i = 0, n = list.length;
+			var list = ctx.getElementsByTagName(tagName),
+				i = 0,
+				n = list.length;
 
 			if (iterator) {
 				for (; i < n; i++) {
@@ -1136,7 +1167,7 @@
 	/** @returns {HTMLElement|false} */
 	function _ghostIsLast(el, evt) {
 		var lastEl = el.lastElementChild,
-				rect = lastEl.getBoundingClientRect();
+			rect = lastEl.getBoundingClientRect();
 
 		return ((evt.clientY - (rect.top + rect.height) > 5) || (evt.clientX - (rect.right + rect.width) > 5)) && lastEl; // min delta
 	}
@@ -1184,12 +1215,12 @@
 	function _throttle(callback, ms) {
 		var args, _this;
 
-		return function () {
+		return function() {
 			if (args === void 0) {
 				args = arguments;
 				_this = this;
 
-				setTimeout(function () {
+				setTimeout(function() {
 					if (args.length === 1) {
 						callback.call(_this, args[0]);
 					} else {
@@ -1221,7 +1252,7 @@
 		off: _off,
 		css: _css,
 		find: _find,
-		is: function (el, selector) {
+		is: function(el, selector) {
 			return !!_closest(el, selector, el);
 		},
 		extend: _extend,
@@ -1237,7 +1268,7 @@
 	 * @param {HTMLElement}  el
 	 * @param {Object}      [options]
 	 */
-	Sortable.create = function (el, options) {
+	Sortable.create = function(el, options) {
 		return new Sortable(el, options);
 	};
 

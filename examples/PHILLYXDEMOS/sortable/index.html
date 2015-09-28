@@ -19,8 +19,10 @@
 				position: relative;
 			}
 			ul li.transition {
-				transition: width,height .5s;/*all 在低端安卓机上太卡，效果不好*/
-				-webkit-transition: width,height .5s;
+				transition: width, height .5s;
+				/*all 在低端安卓机上太卡，效果不好*/
+				
+				-webkit-transition: width, height .5s;
 			}
 			.img-container {
 				float: left;
@@ -33,23 +35,21 @@
 				box-shadow: 5px 5px 5px 0px lightgray;
 				object-fit: cover;
 			}
-			.my-handle {
-				cursor: move;
-				cursor: -webkit-grabbing;
-			}
-			.ghost {
-				opacity: 0;
-				-webkit-animation-name: none;
-			}
 			i {
 				font-style: normal;
 			}
 			.shakecontainer {
 				height: 80px;
 				width: 80px;
-				float: left;
 				padding: 10px;
 				margin: 5px;
+			}
+			.shakefather {
+				float: left;
+				margin: 0;
+				padding: 0;
+				height: 80px;
+				widows: 80px;
 			}
 			.shake {
 				-webkit-transform-origin: center center;
@@ -58,16 +58,16 @@
 				-webkit-animation-timing-function: linear;
 				-webkit-animation-iteration-count: infinite;
 			}
-			li.shakecontainer .img-container {
+			li>div.shakecontainer .img-container {
 				height: 60px;
 				width: 60px;
 				margin-right: 0;
 			}
-			li.shakecontainer .img-container img {
+			li>div.shakecontainer .img-container img {
 				border: 1px solid #C0C0C0;
 				border-radius: 6px;
 			}
-			li.shakecontainer .img-content {
+			li>div.shakecontainer .img-content {
 				display: none;
 			}
 			@-webkit-keyframes shake-rotate {
@@ -132,16 +132,27 @@
 				margin-top: -8px;
 				display: none;
 			}
-			li.shakecontainer .img-remove,
-			li.shakecontainer .img-index {
+			li>div.shakecontainer .img-remove,
+			li>div.shakecontainer .img-index {
 				display: block;
 			}
-			ul li[draggable=true] {
-				-webkit-animation-name: none !important;
+			ul li[draggable=true]>div {
+				-webkit-animation-name: none;
 			}
 			ul li[draggable=true] .img-remove,
 			ul li[draggable=true] .img-index {
 				display: none;
+			}
+			.sort-handle {
+				cursor: move;
+				cursor: -webkit-grabbing;
+			}
+			.sort-ghost {
+				opacity: 0;
+			}
+			.sort-chosen {
+				transform: scale(1.2);
+				-webkit-transform: scale(1.2);
 			}
 		</style>
 		<link rel="stylesheet" type="text/css" href="../css/preview.css" />
@@ -150,7 +161,7 @@
 				var width = document.documentElement.clientWidth;
 				var st = document.createElement('style') || document.getElementById("style_feed");
 				st.id = 'style_feed';
-				var height = (width - 10) * 0.5 * 0.75; 
+				var height = (width - 10) * 0.5 * 0.75;
 				st.innerHTML = "ul li{height:" + height + "px} .img-container{max-width:" + width * 0.5 + "px;width:" + width * 0.5 + "px;height:" + height + "px}";
 				document.head.appendChild(st);
 			}
@@ -177,84 +188,100 @@
 		<div class="mui-content">
 			<ul id="ul_imgs">
 				<li data-li="1">
-					<div class="img-container drag-handle">
-						<img class="item" src="../images/5.jpg" data-preview-src="" data-preview-group="1" />
+					<div>
+						<div class="img-container drag-handle">
+							<img class="item" src="../images/5.jpg" data-preview-src="" data-preview-group="1" />
+						</div>
+						<div class="img-content">
+							<p>1</p>
+						</div>
+						<i class="img-index">1</i>
+						<i class="img-remove ">×</i>
 					</div>
-					<div class="img-content">
-						<p>1</p>
-					</div>
-					<i class="img-index">1</i>
-					<i class="img-remove ">×</i>
 				</li>
 				<li data-li="2">
-					<div class="img-container drag-handle">
-						<img class="item" src="../images/2.jpg" data-preview-src="" data-preview-group="1" />
+					<div>
+						<div class="img-container drag-handle">
+							<img class="item" src="../images/2.jpg" data-preview-src="" data-preview-group="1" />
+						</div>
+						<div class="img-content">
+							<p>2</p>
+						</div>
+						<i class="img-index">2</i>
+						<i class="img-remove ">×</i>
 					</div>
-					<div class="img-content">
-						<p>2</p>
-					</div>
-					<i class="img-index">2</i>
-					<i class="img-remove ">×</i>
 				</li>
 				<li data-li="3">
-					<div class="img-container drag-handle">
-						<img class="item" src="../images/3.jpg" data-preview-src="" data-preview-group="1" />
+					<div>
+						<div class="img-container drag-handle">
+							<img class="item" src="../images/3.jpg" data-preview-src="" data-preview-group="1" />
+						</div>
+						<div class="img-content">
+							<p>3</p>
+						</div>
+						<i class="img-index">3</i>
+						<i class="img-remove ">×</i>
 					</div>
-					<div class="img-content">
-						<p>3</p>
-					</div>
-					<i class="img-index">3</i>
-					<i class="img-remove ">×</i>
 				</li>
 				<li data-li="4">
-					<div class="img-container drag-handle">
-						<img class="item" src="../images/4.jpg" data-preview-src="" data-preview-group="1" />
+					<div>
+						<div class="img-container drag-handle">
+							<img class="item" src="../images/4.jpg" data-preview-src="" data-preview-group="1" />
+						</div>
+						<div class="img-content">
+							<p>4</p>
+						</div>
+						<i class="img-index">4</i>
+						<i class="img-remove">×</i>
 					</div>
-					<div class="img-content">
-						<p>4</p>
-					</div>
-					<i class="img-index">4</i>
-					<i class="img-remove">×</i>
 				</li>
 				<li data-li="5">
-					<div class="img-container drag-handle">
-						<img class="item" src="../images/5.jpg" data-preview-src="" data-preview-group="1" />
+					<div>
+						<div class="img-container drag-handle">
+							<img class="item" src="../images/5.jpg" data-preview-src="" data-preview-group="1" />
+						</div>
+						<div class="img-content">
+							<p>5</p>
+						</div>
+						<i class="img-index">5</i>
+						<i class="img-remove ">×</i>
 					</div>
-					<div class="img-content">
-						<p>5</p>
-					</div>
-					<i class="img-index">5</i>
-					<i class="img-remove ">×</i>
 				</li>
 				<li data-li="6">
-					<div class="img-container drag-handle">
-						<img class="item" src="../images/2.jpg" data-preview-src="" data-preview-group="1" />
+					<div>
+						<div class="img-container drag-handle">
+							<img class="item" src="../images/2.jpg" data-preview-src="" data-preview-group="1" />
+						</div>
+						<div class="img-content">
+							<p>6</p>
+						</div>
+						<i class="img-index">6</i>
+						<i class="img-remove ">×</i>
 					</div>
-					<div class="img-content">
-						<p>6</p>
-					</div>
-					<i class="img-index">6</i>
-					<i class="img-remove ">×</i>
 				</li>
 				<li data-li="7">
-					<div class="img-container drag-handle">
-						<img class="item" src="../images/3.jpg" data-preview-src="" data-preview-group="1" />
+					<div>
+						<div class="img-container drag-handle">
+							<img class="item" src="../images/3.jpg" data-preview-src="" data-preview-group="1" />
+						</div>
+						<div class="img-content">
+							<p>7</p>
+						</div>
+						<i class="img-index">7</i>
+						<i class="img-remove ">×</i>
 					</div>
-					<div class="img-content">
-						<p>7</p>
-					</div>
-					<i class="img-index">7</i>
-					<i class="img-remove ">×</i>
 				</li>
 				<li data-li="8">
-					<div class="img-container drag-handle">
-						<img class="item" src="../images/4.jpg" data-preview-src="" data-preview-group="1" />
+					<div>
+						<div class="img-container drag-handle">
+							<img class="item" src="../images/4.jpg" data-preview-src="" data-preview-group="1" />
+						</div>
+						<div class="img-content">
+							<p>8</p>
+						</div>
+						<i class="img-index">8</i>
+						<i class="img-remove ">×</i>
 					</div>
-					<div class="img-content">
-						<p>8</p>
-					</div>
-					<i class="img-index">8</i>
-					<i class="img-remove ">×</i>
 				</li>
 			</ul>
 
@@ -262,7 +289,7 @@
 
 	</body>
 	<script src="../js/mui.js" type="text/javascript" charset="utf-8"></script>
-	<script src="../js/Sortable.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../js/Sortable-edit.js" type="text/javascript" charset="utf-8"></script>
 	<script src="../js/mui.zoom.js"></script>
 	<script src="../js/mui.previewimage.js"></script>
 	<script type="text/javascript">
@@ -270,19 +297,16 @@
 		 //			1.git: https://github.com/RubaXa/Sortable
 		 //			2.demo: http://rubaxa.github.io/Sortable/
 		var sort;
-		mui.init({
-			gestures: {
-				longtap: true,
-			}
-		});
+		mui.init();
 		var ispaixu = false;
 		mui.ready(function() {
 			mui.previewImage();
 			document.getElementById("btnorder").addEventListener('tap', function() {
 				if (!ispaixu) {
 					mui("ul li").each(function() {
-						this.classList.add('shakecontainer');
-						this.classList.add('shake');
+						this.classList.add('shakefather');
+						this.firstElementChild.classList.add('shakecontainer');
+						this.firstElementChild.classList.add('shake');
 						//在低端安卓机上太卡 
 						this.classList.add('transition');
 						var _this = this;
@@ -297,9 +321,10 @@
 					ispaixu = false;
 					this.innerText = '排序';
 					mui("ul li").each(function() {
-						this.classList.remove('shakecontainer');
-						this.classList.remove('shake');
+						this.firstElementChild.classList.remove('shakecontainer');
+						this.firstElementChild.classList.remove('shake');
 						this.classList.add('transition');
+						this.classList.remove('shakefather');
 						var _this = this;
 						setTimeout(function() {
 							_this.classList.remove('transition');
@@ -321,11 +346,13 @@
 
 		function setSortable() {
 			sort = new Sortable(document.getElementById("ul_imgs"), {
-				chosenClass: 'sortchosen',
-				ghostClass: 'ghost',
+				chosenClass: 'sort-chosen',
+				ghostClass: 'sort-ghost',
 				scroll: true,
-				//				animation: 150, 
+				//				delay:300,
+				animation: 400,
 				handle: '.drag-handle',
+				isDropAnimation: false, //自定义属性
 				onStart: function( /**Event*/ evt) { // 拖拽
 					//console.log(new Date(evt.timeStamp).toLocaleString());
 					//console.log(evt.oldIndex);

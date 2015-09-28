@@ -1,4 +1,4 @@
-
+myajax.js
 (function(com) {
 	/**
  	* @author 1020450921@qq.com
