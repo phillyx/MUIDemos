@@ -473,8 +473,10 @@
 				touchEvt = touch;
 				//TODO 1020450921@qq.com add scale style
 				//translate3d+=ghostEl.style.transform.replace(/translate(3d|)\([\-\w\,\s]+\)/g,'');
-				translate3d+=' scale(1.2) ';
-				
+				if (this.options.ghostScale && !isNaN(this.options.ghostScale)) {
+					translate3d += ' scale('+this.options.ghostScale+') ';
+				}
+
 				_css(ghostEl, 'webkitTransform', translate3d);
 				_css(ghostEl, 'mozTransform', translate3d);
 				_css(ghostEl, 'msTransform', translate3d);

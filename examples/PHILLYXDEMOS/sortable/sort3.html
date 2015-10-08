@@ -52,19 +52,16 @@
 			.img-father .img-index {
 				position: absolute;
 				z-index: 9;
-				left: 50%;
-				top: 50%;
-				background-color: rgba(0, 0, 0, 0.5);
-				border-radius: 50%;
+				right: 15px;
+				bottom:15px ;
 				font-size: 14px;
-				height: 16px;
-				width: 16px;
-				line-height: 16px;
+				height: 14px;
+				width: 14px;
+				line-height: 14px;
 				text-align: center;
 				color: white;
 				margin-left: -8px;
 				margin-top: -8px;
-				display: none;
 			}
 			.img-father .img-remove {
 				display: none;
@@ -180,7 +177,7 @@
 				<br />主要有以下三点：
 				<br/> 1.在移动端如果滑动排序的速度很快，有闪烁效果
 				<br />2.排序时没有延时,targetEl在dragEl刚drop时就开始移动了
-				<br />3. targetEl和dragEl间的兄弟结点移动时没有动画
+				<br />3.targetEl和dragEl间的兄弟结点移动时没有动画
 				<br /> 为了接近或达到原生的排序效果，更改了sortable.js,具体见代码
 			</p>
 			<ul id="ul_imgs">
@@ -332,7 +329,10 @@
 				delay: 150,
 				animation: 400,
 				handle: '.drag-handle',
-				isDropAnimation: false, //自定义属性
+				//-------- 自定义属性
+				isDropAnimation: false, //DragDrop时是否对DragEl启用滑动效果
+				ghostScale:1.2,//DragGhostEl 缩放效果
+				//--------
 				onStart: function( /**Event*/ evt) { // 拖拽
 					touchtime = evt.timeStamp;
 					item_offset.left = evt.item.offsetLeft;
