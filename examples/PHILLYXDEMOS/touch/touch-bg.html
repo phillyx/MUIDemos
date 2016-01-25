@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="../js/mui.min.js"></script>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script type="text/javascript" charset="UTF-8">
+			mui.init();
+		</script>
+		<style type="text/css">
+			.touch-bg,
+			.touch-bg-js {
+				position: absolute;
+				width: 2px;
+				height: 2px;
+				margin: 0;
+				border-radius: 50%;
+				background-color: #C0C0C0;
+				opacity: 0.3;
+				display: none;
+			}
+			
+			.touch-bg-js {
+				display: block;
+				transition: all 0.05s;
+				-webkit-transition: all 0.05s;
+			}
+			
+			button {
+				overflow: hidden;
+			}
+			
+			.touch-bg-active {
+				transition: all 2s;
+				-webkit-transition: all 2s;
+				width: 120vw;
+				height: 120vw;
+				margin-left: -60vw;
+				margin-top: -60vw;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div class="mui-card">
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell">
+						<a class="mui-navigate-right">
+	                    Item 1
+	                </a>
+					</li>
+					<li class="mui-table-view-cell">
+						<a class="mui-navigate-right">
+	                     Item 2
+	                </a>
+					</li>
+					<li class="mui-table-view-cell">
+						<a class="mui-navigate-right">
+	                     Item 3
+	                </a>
+					</li>
+				</ul>
+			</div>
+			<button type="button" class="mui-btn mui-btn-block mui-btn-nav">按钮
+			</button>
+
+			<button type="button" class="mui-btn" style="width: 150px;margin-left: 100px;">按钮
+			</button>
+		</div>
+		<script type="text/javascript">
+			var startX, startY,
+				btn = document.querySelector("button");
+			var isend, tick, no;
+			btn.addEventListener('touchstart', function(e) {
+				e.preventDefault(); //阻止触摸时浏览器的缩放、滚动条滚动等
+				var touch_bg = document.createElement('div');
+				touch_bg.className = 'touch-bg-js';
+				this.style.overflow = 'hidden';
+				this.appendChild(touch_bg);
+				var touch = e.touches[0]; //获取第一个触点
+				var x = touch.pageX; //页面触点X坐标
+				var y = touch.pageY; //页面触点Y坐标
+				//记录触点初始位置
+				startX = x;
+				startY = y;
+				touch_bg.style.top = (y - this.offsetTop) + 'px';
+				touch_bg.style.left = x + 'px';
+				isend = false;
+				tick = new Date().getTime();
+				var _this = this;
+				var isOut = false;
+				var touch_bg_scale, innerInterval;
+				if (touch_bg_scale) {
+					clearInterval(touch_bg_scale);
+					innerInterval && clearInterval(innerInterval);
+					no = 0;
+					_this.removeChild(touch_bg);
+				}
+				setTimeout(function() {
+					touch_bg_scale = setInterval(function() {
+						no++;
+						if (isend) {
+							console.log(tick);
+							if (tick < 800) { //有瑕疵
+								console.log("over");
+								if (!isOut) {
+									isOut = true;
+									clearInterval(touch_bg_scale);
+									touch_bg.style.transition = 'all .025s';
+									touch_bg.style.webkitTransition = 'all .025s';
+									var isInner = false;
+									innerInterval = setInterval(function() {
+										no++;
+										touch_bg.style.width = touch_bg.style.height = 10 * 1.67 * 2 * no + "px";
+										touch_bg.style.marginLeft = touch_bg.style.marginTop = -5 * 1.67 * 2 * no + "px";
+										if (!isInner) {
+											isInner = true;
+											setTimeout(function() {
+												_this.removeChild(touch_bg);
+												clearInterval(innerInterval);
+												no = 0;
+												console.log("end");
+												isOut = false;
+											}, (800 - tick) / 2);
+										}
+									}, 25);
+								}
+							} else {
+								clearInterval(touch_bg_scale);
+								no = 0;
+								_this.removeChild(touch_bg);
+							}
+						}
+						touch_bg.style.width = touch_bg.style.height = 10 * 1.67 * 2 * no + "px";
+						touch_bg.style.marginLeft = touch_bg.style.marginTop = -5 * 1.67 * 2 * no + "px";
+					}, 50); //1000为1秒钟
+				}, 10)
+			});
+			document.querySelector("button").addEventListener('touchstart', function() {
+				//				console.log('touchmove' + new Date().toISOString());
+			});
+			document.querySelector("button").addEventListener('touchend', function() {
+				//				console.log('touchend' + new Date().toISOString());
+				isend = true;
+				tick = new Date().getTime() - tick;
+			});
+			(function(win) {
+				var sty = document.createElement('style');
+				sty.innerText = ".touch-bg,{position: absolute;width: 2px;height: 2px;margin: 0;border-radius: 50%;background-color: #C0C0C0;opacity: 0.3;display: none;}.touch-bg-active {transition: all 2s;-webkit-transition: all 2s;width: 120vw;height: 120vw;margin-left: -60vw;margin-top: -60vw;}";
+				document.head.appendChild(sty);
+				sty = null;
+				var tick, startX, startY;
+
+				function touchStart(e) {
+					var _this = this;
+					e.preventDefault(); //阻止触摸时浏览器的缩放、滚动条滚动等
+					if (_this.style.position == "static") {
+						_this.style.position = 'relative';
+					}
+					_this.style.overflow = 'hidden';
+					var touch_bg = document.createElement('div');
+					touch_bg.className = 'touch-bg';
+					_this.appendChild(touch_bg);
+					var touch = e.touches[0]; //获取第一个触点
+					var x = touch.pageX; //页面触点X坐标
+					var y = touch.pageY; //页面触点Y坐标
+					//记录触点初始位置
+					startX = x;
+					startY = y;
+					touch_bg.style.top = Math.abs(this.offsetTop - y) + 'px';
+					touch_bg.style.left = Math.abs(this.offsetLeft - x) + 'px';
+					touch_bg.style.display = 'block';
+					tick = new Date().getTime();
+					setTimeout(function() {
+						touch_bg.classList.add('touch-bg-active');
+						/*默认值
+						 * 盒子宽度一半+触点相对位移+5px的边角拓展
+						 **/
+						var radius = _this.offsetWidth / 2 + Math.abs(_this.offsetWidth / 2 - x) + 5;
+						//最小值
+						radius = radius < 200 ? 200 : radius;
+						touch_bg.style.width = touch_bg.style.height = radius * 2 + "px";
+						touch_bg.style.marginLeft = touch_bg.style.marginTop = -radius + "px";
+					}, 10);
+					console.log(this.innerHTML);
+				};
+
+				function touchEnd(e) {
+					var _this = this;
+					var touch_bg = this.querySelector('.touch-bg');
+					tick = new Date().getTime() - tick;
+					if (touch_bg.offsetHeight < document.body.offsetWidth && tick < 300) {
+						touch_bg.style.transition = 'all 1s';
+						touch_bg.style.webkitTransition = 'all 1s';
+						touch_bg.style.width = touch_bg.style.height = _this.offsetWidth * 2 + "px";
+						touch_bg.style.marginLeft = touch_bg.style.marginTop = -_this.offsetWidth + "px";
+						setTimeout(function() {
+							_this.removeChild(touch_bg);
+						}, 500)
+					} else {
+						_this.removeChild(touch_bg);
+					}
+				};
+				win.touch_bg_phillyx = {
+					init: function(obj) {
+						obj.addEventListener('touchstart', touchStart)
+						obj.addEventListener('touchend', touchEnd);
+					}
+				}
+			}(window));
+			mui('.mui-table-view .mui-table-view-cell').each(function(index, item) {
+				touch_bg_phillyx.init(this);
+			});
+			mui('button').each(function(index, item) {
+				touch_bg_phillyx.init(this);
+			});
+		</script>
+	</body>
+
+</html>
