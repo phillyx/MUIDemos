@@ -4,39 +4,38 @@
  * @link http://ask.dcloud.net.cn/people/%E5%B0%8F%E4%BA%91%E8%8F%9C
  *@description 将网络图片下载到本地并显示，包括缓存
 */
-(function(window, common/*, async*/) {
-	
-	
+(function(win, com) {
+
+	var makeArray = function(obj) {
+		var res = [];
+		for (var i = 0, len = obj.length; i < len; i++) {
+			res.push(obj[i]);
+		}
+		return res;
+	}
+
 	function lazyLoad(doc, cb) {
-		console.log(Lazyimg.pageno);
+		//console.log(Lazyimg.pageno);
 		var imgs;
-		if(Lazyimg.pageno){
+		if (Lazyimg.pageno) {
 			imgs = doc.querySelectorAll("img[data-pageno='" + Lazyimg.pageno + "']");
-		}else{
+		} else {
 			imgs = doc.querySelectorAll('img.lazy');
 		}
-		// async.each(imgs, function(img, cb1) {
-		// 	var data_src = img.getAttribute('data-src');
-		// 	if (data_src && data_src.indexOf('http://') >= 0) {
-		// 		common.cache.getFile(data_src, function(localUrl) {
-		// 			setPath(img, localUrl);
-		// 			cb1(null);
-		// 		});
-		// 	}
-		// }, function() {
-		// 	cb && cb();
-		// });
 
-		com.myasync(imgs, function(img, next) {
+		com.myasync(makeArray(imgs), function(img, next) {
 			var data_src = img.getAttribute('data-src');
+			//console.log("data_src: "+data_src);
 			if (data_src && data_src.indexOf('http://') >= 0) {
-				common.cache.getFile(data_src, function(localUrl) {
-				 	setPath(img, localUrl);
+				com.cache.getFile(data_src, function(localUrl) {
+					setPath(img, localUrl);
 					next();
 				});
-			}	
+			} else {
+				next();
+			}
 		}, function() {
-			 cb && cb();
+			cb && cb();
 		});
 
 	};
@@ -46,11 +45,11 @@
 		img.classList.remove("lazy");
 	};
 
-	window.Lazyimg = {
+	win.Lazyimg = {
 		lazyLoad: function(doc, cb) {
 			lazyLoad(doc ? doc : document, cb);
 		},
 		pageno: null
 	};
 
-})(window, common /*, async*/);
+})(window, common);

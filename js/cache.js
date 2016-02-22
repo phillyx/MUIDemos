@@ -92,7 +92,7 @@ myajax.js
 		//		}, function(e) {
 		//			cb & cb(false);
 		//		});
-		//var waiting=plus.nativeUI.showWaiting('缓存清除中...');
+		waiting = waiting || plus.nativeUI.showWaiting('缓存清除中...');
 		plus.io.resolveLocalFileSystemURL("_downloads/", function(entry) {
 			var tmpcou = 0;
 			var dirReader = entry.createReader();

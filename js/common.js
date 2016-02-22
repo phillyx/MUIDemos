@@ -7,11 +7,11 @@
 var common =
 	(function($) {
 		var com = {};
-			/**
-			 * @description 获取当前DOM的所有同类型兄弟结点
-			 * @param {Object} obj
-			 * @param {Object} arr
-			 */
+		/**
+		 * @description 获取当前DOM的所有同类型兄弟结点
+		 * @param {Object} obj
+		 * @param {Object} arr
+		 */
 		var getAllDomBrothers = function(obj, arr) {
 			var arr = arr || [];
 			var pre = obj.previousElementSibling;
@@ -29,7 +29,7 @@ var common =
 		};
 		com.getAllDomBrothers = getAllDomBrothers;
 		/**
-		 * 通过递归实现进程阻塞
+		 * 通过递归实现异步阻塞
 		 * @param {Object} list
 		 * @param {Object} cb_exec
 		 * @param {Object} cb_end
@@ -46,6 +46,9 @@ var common =
 			each(list, cb_exec)
 		};
 		com.myasync = myasync;
+		/**
+		 * @description 生成一个随机数
+		 */
 		com.hashCode = function(str) {
 			var hash = 0;
 			if (!str || str.length == 0) return hash.toString();
@@ -64,10 +67,9 @@ var common =
 			return Math.floor(Math.random() * 100000000 + 10000000).toString();
 		};
 		/**
-		 *@author liuyf 2015-4-30
-		 *@description 获取系统信息
+		 * @author liuyf 2015-4-30
+		 * @description 获取系统信息
 		 */
-		//获得系统信息 
 		com.GetDeviceInfo = function() {
 			var device = {
 				IMEI: plus.device.imei,
@@ -98,6 +100,63 @@ var common =
 				Vendor: plus.os.vendor
 			};
 			return device;
+		};
+
+		/**
+		 * @description 安卓创建快捷键方式
+		 *
+		 */
+		com.createShortcut = function(name,iconUrl) {
+			if (mui.os.android) {
+				// 导入要用到的类对象
+				var Intent = plus.android.importClass("android.content.Intent");
+				var BitmapFactory = plus.android.importClass("android.graphics.BitmapFactory");
+				// 获取主Activity
+				var main = plus.android.runtimeMainActivity();
+				// 创建快捷方式意图
+				var shortcut = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
+				// 设置快捷方式的名称
+				shortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
+				// 设置不可重复创建
+				shortcut.putExtra("duplicate", false);
+				// 设置快捷方式图标
+				var iconPath = plus.io.convertLocalFileSystemURL(iconUrl); // 将相对路径资源转换成系统绝对路径
+				var bitmap = BitmapFactory.decodeFile(iconPath);
+				shortcut.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
+				// 设置快捷方式启动执行动作
+				var action = new Intent(Intent.ACTION_MAIN);
+				action.setComponent(main.getComponentName());
+				shortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, action);
+				// 广播创建快捷方式
+				main.sendBroadcast(shortcut);
+			}
+		};
+		/**
+		 * @description 双击返回键退出
+		 */
+		com.bindQuit = function() {
+			if (mui.os.android) {
+				var backButtonPress = 0;
+				mui.back = function(event) {
+					backButtonPress++;
+					if (backButtonPress > 1) {
+						plus.runtime.quit();
+					} else {
+						plus.nativeUI.toast('再按一次退出应用');
+					}
+					setTimeout(function() {
+						backButtonPress = 0;
+					}, 1000);
+					return false;
+				};
+			}
+		};
+		com.androidMarket(pname) {
+			plus.runtime.openURL("market://details?id=" + pname);
+		};
+
+		com.iosAppstore(url) {
+			plus.runtime.openURL("itms-apps://" + url);
 		};
 		return com;
 	}(mui));

@@ -1,4 +1,4 @@
-(function(com, mui) {
+(function(win,com, mui) {
 	/**
  	* @author 1020450921@qq.com
  	* @link http://www.cnblogs.com/phillyx
@@ -6,25 +6,20 @@
 	* @description 本地存储
 	*/
 	var myStorage = {};
-	//var first = null;
 
 	function getItem(k) {
 		var jsonStr = window.localStorage.getItem(k.toString());
-		//console.log("getItem" +( new Date().getTime() - first));
 		return jsonStr ? JSON.parse(jsonStr).data : null;
 	};
 
 	function getItemPlus(k) {
 		var jsonStr = plus.storage.getItem(k.toString());
-		//console.log("getItemPlus" + (new Date().getTime() - first));
 		return jsonStr ? JSON.parse(jsonStr).data : null;
 	};
 	myStorage.getItem = function(k) {
-		//first = new Date().getTime();
 		return getItem(k) || getItemPlus(k);
 	};
 	myStorage.setItem = function(k, value) {
-		//first = new Date().getTime();
 		value = JSON.stringify({
 			data: value
 		});
@@ -38,7 +33,6 @@
 			removeItem(k);
 			plus.storage.setItem(k, value);
 		}
-		//console.log("setItem__"+key+"__"+(new Date().getTime() - first));
 	};
 
 	function getLength() {
@@ -139,7 +133,6 @@
 		if (typeof(keys) === "string") {
 			keys = [keys];
 		}
-		keys = keys || ["filePathCache_", "ajax_cache_", "Wedding", "wedding"];
 		var numKeys = getLength();
 		var numKeysPlus = getLengthPlus();
 		//TODO plus.storage是线性存储的，从后向前删除是可以的 
@@ -172,5 +165,5 @@
 		cb && cb();
 	};
 	com.myStorage = myStorage;
-	window.myStorage = myStorage;
-}(common, mui));
+	win.myStorage = myStorage;
+}(window,common, mui));

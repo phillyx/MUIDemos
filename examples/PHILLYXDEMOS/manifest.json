@@ -189,5 +189,65 @@
 				}
 			}
 		}
+	},
+	"dependencies": {
+		"pages": {
+			"index.html": {
+				"resources": [
+					"js/mui.min.js",
+					"fonts/mui.ttf",
+					"css/mui.min.css"
+				],
+				"refer": [],
+				"priority": 0
+			}
+		},
+		"idle": {
+			"resources": [
+				"images/cbd.jpg",
+				"images/face/face-06.jpg",
+				"images/muwu.jpg",
+				"images/face/face-02.jpg",
+				"js/Sortable.js",
+				"images/shuijiao.jpg",
+				"touch/含mui的html.html",
+				"images/42x42.gif",
+				"images/3.jpg",
+				"css/bootstrap.min.css",
+				"images/face/face-01.jpg",
+				"images/4.jpg",
+				"images/iconfont-tianjia.png",
+				"images/pull_arrow.png",
+				"js/mui.zoom.js",
+				"images/target.jpg",
+				"images/logo.png",
+				"images/face/face-08.jpg",
+				"images/60x60.gif",
+				"js/mui.previewimage.js",
+				"js/mui.js",
+				"images/login-1.png",
+				"js/template-native.js",
+				"images/2.jpg",
+				"css/preview.css",
+				"images/face/face-04.jpg",
+				"images/5.jpg",
+				"images/face/face-09.jpg",
+				"images/face/face-03.jpg",
+				"js/Sortable_0.4.1.zip",
+				"sortable/sort3.html",
+				"sortable/addteml.html",
+				"images/face/face-05.jpg",
+				"images/pull_fresh.png",
+				"css/mui.css",
+				"sortable/info.md.txt",
+				"sortable/index.html",
+				"sortable/child.html",
+				"images/yuantiao.jpg",
+				"images/1.png",
+				"js/Sortable-edit.js",
+				"js/artTemplate.js",
+				"images/face/face-07.jpg"
+			]
+		}
 	}
 }

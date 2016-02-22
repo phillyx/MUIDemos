@@ -30,7 +30,7 @@
 			itemData.sTop = offset.top;
 			itemData.sLeft = offset.left;
 			//缩放判断，解决预加载图片时，图片过大，和当前显示图片重叠的问题
-            //未更改之前缩放比例能达到2。5倍以上
+            //未更改之前缩放比例能达到2.5倍以上
 			var scale = Math.max(itemData.sWidth / window.innerWidth, itemData.sHeight / window.innerHeight);
 			itemData.sScale = scale > 1 ? 0.977 : scale;
 		}
