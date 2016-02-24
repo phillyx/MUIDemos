@@ -1,4 +1,4 @@
-##MUI - 封装localStorage与plus.storage 2.0版本
+##MUI - 封装localStorage与plus.storage
 	在使用plus.storage频繁地存取数据时，可以感觉到明显的卡顿，而且很耗内存，
     在切换到localstorage时虽然效率很高，页面渲染速度明显变快了，且手机发热不明显，不过又遇到了存储瓶颈（一般<=5M）,
     因此折中采取了plus.storage与localStorage混合的方案：

@@ -4,7 +4,7 @@
  * @link http://ask.dcloud.net.cn/people/%E5%B0%8F%E4%BA%91%E8%8F%9C
  *@description 将网络图片下载到本地并显示，包括缓存
 */
-(function(win, com) {
+(function(win, com,$) {
 
 	var makeArray = function(obj) {
 		var res = [];
@@ -23,7 +23,7 @@
 			imgs = doc.querySelectorAll('img.lazy');
 		}
 
-		com.myasync(makeArray(imgs), function(img, next) {
+		com.myasync(/*makeArray(imgs)*/$.slice.call(imgs), function(img, next) {
 			var data_src = img.getAttribute('data-src');
 			//console.log("data_src: "+data_src);
 			if (data_src && data_src.indexOf('http://') >= 0) {
@@ -45,11 +45,11 @@
 		img.classList.remove("lazy");
 	};
 
-	win.Lazyimg = {
+	win.lazyImg = {
 		lazyLoad: function(doc, cb) {
 			lazyLoad(doc ? doc : document, cb);
 		},
 		pageno: null
 	};
 
-})(window, common);
+})(window, common, mui);
