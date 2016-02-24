@@ -29,7 +29,7 @@
 		} catch (e) {
 			console.log(e);
 			//TODO 超出localstorage容量限制则存到plus.storage中
-			//··
+			//且删除localStorage重复的数据
 			removeItem(k);
 			plus.storage.setItem(k, value);
 		}

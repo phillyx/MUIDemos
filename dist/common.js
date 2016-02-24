@@ -6,12 +6,12 @@
  */
 var common =
 	(function($) {
-		var com = {}
-			/**
-			 * @description 获取当前DOM的所有同类型兄弟结点
-			 * @param {Object} obj
-			 * @param {Object} arr
-			 */
+		var com = {};
+		/**
+		 * @description 获取当前DOM的所有同类型兄弟结点
+		 * @param {Object} obj
+		 * @param {Object} arr
+		 */
 		var getAllDomBrothers = function(obj, arr) {
 			var arr = arr || [];
 			var pre = obj.previousElementSibling;
@@ -29,7 +29,7 @@ var common =
 		};
 		com.getAllDomBrothers = getAllDomBrothers;
 		/**
-		 * 通过递归实现进程阻塞
+		 * 通过递归实现异步阻塞
 		 * @param {Object} list
 		 * @param {Object} cb_exec
 		 * @param {Object} cb_end
@@ -46,6 +46,9 @@ var common =
 			each(list, cb_exec)
 		};
 		com.myasync = myasync;
+		/**
+		 * @description 生成一个随机数
+		 */
 		com.hashCode = function(str) {
 			var hash = 0;
 			if (!str || str.length == 0) return hash.toString();
@@ -64,10 +67,9 @@ var common =
 			return Math.floor(Math.random() * 100000000 + 10000000).toString();
 		};
 		/**
-		 *@author liuyf 2015-4-30
-		 *@description 获取系统信息
+		 * @author liuyf 2015-4-30
+		 * @description 获取系统信息
 		 */
-		//获得系统信息 
 		com.GetDeviceInfo = function() {
 			var device = {
 				IMEI: plus.device.imei,
@@ -99,9 +101,67 @@ var common =
 			};
 			return device;
 		};
+
+		/**
+		 * @description 安卓创建快捷键方式
+		 *
+		 */
+		com.createShortcut = function(name,iconUrl) {
+			if (mui.os.android) {
+				// 导入要用到的类对象
+				var Intent = plus.android.importClass("android.content.Intent");
+				var BitmapFactory = plus.android.importClass("android.graphics.BitmapFactory");
+				// 获取主Activity
+				var main = plus.android.runtimeMainActivity();
+				// 创建快捷方式意图
+				var shortcut = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
+				// 设置快捷方式的名称
+				shortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, name);
+				// 设置不可重复创建
+				shortcut.putExtra("duplicate", false);
+				// 设置快捷方式图标
+				var iconPath = plus.io.convertLocalFileSystemURL(iconUrl); // 将相对路径资源转换成系统绝对路径
+				var bitmap = BitmapFactory.decodeFile(iconPath);
+				shortcut.putExtra(Intent.EXTRA_SHORTCUT_ICON, bitmap);
+				// 设置快捷方式启动执行动作
+				var action = new Intent(Intent.ACTION_MAIN);
+				action.setComponent(main.getComponentName());
+				shortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, action);
+				// 广播创建快捷方式
+				main.sendBroadcast(shortcut);
+			}
+		};
+		/**
+		 * @description 双击返回键退出
+		 */
+		com.bindQuit = function() {
+			if (mui.os.android) {
+				var backButtonPress = 0;
+				mui.back = function(event) {
+					backButtonPress++;
+					if (backButtonPress > 1) {
+						plus.runtime.quit();
+					} else {
+						plus.nativeUI.toast('再按一次退出应用');
+					}
+					setTimeout(function() {
+						backButtonPress = 0;
+					}, 1000);
+					return false;
+				};
+			}
+		};
+		com.androidMarket(pname) {
+			plus.runtime.openURL("market://details?id=" + pname);
+		};
+
+		com.iosAppstore(url) {
+			plus.runtime.openURL("itms-apps://" + url);
+		};
 		return com;
 	}(mui));
-(function(com, mui) {
+
+(function(win,com, mui) {
 	/**
  	* @author 1020450921@qq.com
  	* @link http://www.cnblogs.com/phillyx
@@ -109,25 +169,20 @@ var common =
 	* @description 本地存储
 	*/
 	var myStorage = {};
-	//var first = null;
 
 	function getItem(k) {
 		var jsonStr = window.localStorage.getItem(k.toString());
-		//console.log("getItem" +( new Date().getTime() - first));
 		return jsonStr ? JSON.parse(jsonStr).data : null;
 	};
 
 	function getItemPlus(k) {
 		var jsonStr = plus.storage.getItem(k.toString());
-		//console.log("getItemPlus" + (new Date().getTime() - first));
 		return jsonStr ? JSON.parse(jsonStr).data : null;
 	};
 	myStorage.getItem = function(k) {
-		//first = new Date().getTime();
 		return getItem(k) || getItemPlus(k);
 	};
 	myStorage.setItem = function(k, value) {
-		//first = new Date().getTime();
 		value = JSON.stringify({
 			data: value
 		});
@@ -141,7 +196,6 @@ var common =
 			removeItem(k);
 			plus.storage.setItem(k, value);
 		}
-		//console.log("setItem__"+key+"__"+(new Date().getTime() - first));
 	};
 
 	function getLength() {
@@ -242,7 +296,6 @@ var common =
 		if (typeof(keys) === "string") {
 			keys = [keys];
 		}
-		keys = keys || ["filePathCache_", "ajax_cache_", "Wedding", "wedding"];
 		var numKeys = getLength();
 		var numKeysPlus = getLengthPlus();
 		//TODO plus.storage是线性存储的，从后向前删除是可以的 
@@ -275,9 +328,8 @@ var common =
 		cb && cb();
 	};
 	com.myStorage = myStorage;
-	window.myStorage = myStorage;
-}(common, mui));
-
+	win.myStorage = myStorage;
+}(window,common, mui));
 
 (function(com) {
 	/**
@@ -372,7 +424,7 @@ var common =
 		//		}, function(e) {
 		//			cb & cb(false);
 		//		});
-		//var waiting=plus.nativeUI.showWaiting('缓存清除中...');
+		waiting = waiting || plus.nativeUI.showWaiting('缓存清除中...');
 		plus.io.resolveLocalFileSystemURL("_downloads/", function(entry) {
 			var tmpcou = 0;
 			var dirReader = entry.createReader();
@@ -431,39 +483,38 @@ var common =
  * @link http://ask.dcloud.net.cn/people/%E5%B0%8F%E4%BA%91%E8%8F%9C
  *@description 将网络图片下载到本地并显示，包括缓存
 */
-(function(window, common/*, async*/) {
-	
-	
+(function(win, com,$) {
+
+	var makeArray = function(obj) {
+		var res = [];
+		for (var i = 0, len = obj.length; i < len; i++) {
+			res.push(obj[i]);
+		}
+		return res;
+	}
+
 	function lazyLoad(doc, cb) {
-		console.log(Lazyimg.pageno);
+		//console.log(Lazyimg.pageno);
 		var imgs;
-		if(Lazyimg.pageno){
+		if (Lazyimg.pageno) {
 			imgs = doc.querySelectorAll("img[data-pageno='" + Lazyimg.pageno + "']");
-		}else{
+		} else {
 			imgs = doc.querySelectorAll('img.lazy');
 		}
-		// async.each(imgs, function(img, cb1) {
-		// 	var data_src = img.getAttribute('data-src');
-		// 	if (data_src && data_src.indexOf('http://') >= 0) {
-		// 		common.cache.getFile(data_src, function(localUrl) {
-		// 			setPath(img, localUrl);
-		// 			cb1(null);
-		// 		});
-		// 	}
-		// }, function() {
-		// 	cb && cb();
-		// });
 
-		com.myasync(imgs, function(img, next) {
+		com.myasync(/*makeArray(imgs)*/$.slice.call(imgs), function(img, next) {
 			var data_src = img.getAttribute('data-src');
+			//console.log("data_src: "+data_src);
 			if (data_src && data_src.indexOf('http://') >= 0) {
-				common.cache.getFile(data_src, function(localUrl) {
-				 	setPath(img, localUrl);
+				com.cache.getFile(data_src, function(localUrl) {
+					setPath(img, localUrl);
 					next();
 				});
-			}	
+			} else {
+				next();
+			}
 		}, function() {
-			 cb && cb();
+			cb && cb();
 		});
 
 	};
@@ -473,11 +524,11 @@ var common =
 		img.classList.remove("lazy");
 	};
 
-	window.Lazyimg = {
+	win.lazyImg = {
 		lazyLoad: function(doc, cb) {
 			lazyLoad(doc ? doc : document, cb);
 		},
 		pageno: null
 	};
 
-})(window, common /*, async*/);
+})(window, common, mui);
