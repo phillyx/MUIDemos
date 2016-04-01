@@ -15,10 +15,10 @@
 	}
 
 	function lazyLoad(doc, cb) {
-		//console.log(Lazyimg.pageno);
+		//console.log(lazyImg.pageno);
 		var imgs;
-		if (Lazyimg.pageno) {
-			imgs = doc.querySelectorAll("img[data-pageno='" + Lazyimg.pageno + "']");
+		if (lazyImg.pageno) {
+			imgs = doc.querySelectorAll("img[data-pageno='" + lazyImg.pageno + "']");
 		} else {
 			imgs = doc.querySelectorAll('img.lazy');
 		}
