@@ -1,6 +1,6 @@
 说明
 ====
-目前我主要专注于[DCloud](http://www.dcloud.io/)平台的hybird app开发， 
+目前我主要专注于[DCloud](http://www.dcloud.io/)平台的hybrid app开发， 
 
 因此在这里分享一些示例和app，希望给后来者以借鉴，避免或减少重复造轮子的过程。
 
