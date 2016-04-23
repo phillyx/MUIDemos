@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="js/mui.min.js"></script>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			html,
+			body {
+				height: 100%;
+			}
+			.mui-content {
+				margin: 20px 30px;
+				width: 450px;
+			}
+			.btn-container {
+				margin-top: 20px;
+				text-align: center;
+			}
+			input[type=password] {
+				margin-top: 40px;
+				border: 1px solid #d9d9d9;
+				border-radius: 4px;
+			}
+			footer{
+				margin: 40px 20px;
+			}
+		</style>
+		<script type="text/javascript" charset="utf-8">
+			mui.init({
+				beforeback: function() {
+					var main = plus.webview.getLaunchWebview();
+					var op = plus.webview.currentWebview().opener();
+					main.setStyle({
+						mask: 'none'
+					});
+					op.setStyle({
+						mask: 'none'
+					})
+				}
+			});
+		</script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">设置</h1>
+			<button id="btnClose" type="button" class="mui-btn mui-btn-blue mui-btn-link mui-pull-right" style="padding－left:20px;">关闭</button>
+		</header>
+		<div class="mui-content">
+
+			<input type="password" class="mui-input-clear" placeholder="请输入下载代码">
+			<div class='btn-container'>
+				<button id="down" class="mui-btn mui-btn-blue" style="font-size: larger;margin-top: 15px;">下&nbsp;&nbsp;载</button>
+			</div>
+
+		</div>
+		<footer>
+			<img src="images/logo2.png" />
+		</footer>
+		<script src="js/html5sql.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/tool.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/async.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/common.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				document.getElementById("down").addEventListener('tap', function() {
+					common.cache.clear(function() {
+						var ws = plus.nativeUI.showWaiting('数据下载中...');
+						Too.getData(null, function(error) {
+							if (error) {
+								ws.setTitle('下载失败');
+							} else {
+								ws.setTitle('下载成功');
+								//刷新相关页，重新加载数据
+								plus.webview.getWebviewById('index-title').reload();
+								plus.webview.getWebviewById('index-menu').reload();
+							}
+							setTimeout(function() {
+								ws.close();
+							}, 1000);
+						})
+					});
+				});
+				document.getElementById("btnClose").addEventListener('tap', function() {
+					mui.back();
+				});
+			});
+		</script>
+	</body>
+
+</html>

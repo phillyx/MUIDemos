@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title></title>
+		<script src="js/mui.min.js"></script>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style>
+			html,
+			body {
+				height: 100%;
+			}
+			header {
+				height: 60px !important;
+			}
+			.mui-content {
+				padding-top: 60px !important;
+			}
+			.mui-title {
+				line-height: 60px;
+				font-size: 20px;
+			}
+			.my-title {
+				right: 100px !important;
+			}
+			.mui-scroll-wrapper {
+				bottom: 200px;
+			}
+			.too_footer {
+				/*height: 49px;
+				border-top: 1px solid #ccc;*/
+				/*background: #e8e8e8;*/
+				
+				z-index: 2;
+				position: absolute;
+				left: 0;
+				bottom: 30px;
+				right: 0;
+			}
+			.too_footer img {
+				margin-left: 40px;
+			}
+			.mui-fadein {
+				opacity: 1;
+				animation-name: 'fadein';
+				animation-delay: 0s;
+				animation-duration: 1s;
+				-webkit-animation-name: 'fadein';
+				-webkit-animation-delay: 0s;
+				-webkit-animation-duration: 1s;
+			}
+			.mui-fadeout {
+				opacity: 0;
+				animation-name: 'fadeout';
+				animation-delay: 0s;
+				animation-duration: 1s;
+				-webkit-animation-name: 'fadeout';
+				-webkit-animation-delay: 0s;
+				-webkit-animation-duration: 1s;
+			}
+			@keyframes fadein {
+				from {
+					opacity: 0;
+				}
+				to {
+					opacity: 1;
+				}
+			}
+			@-webkit-keyframes fadein {
+				from {
+					opacity: 0;
+				}
+				to {
+					opacity: 1;
+				}
+			}
+			@keyframes fadeout {
+				from {
+					opacity: 1;
+				}
+				to {
+					opacity: 0;
+				}
+			}
+			@-webkit-keyframes fadeout {
+				from {
+					opacity: 1;
+				}
+				to {
+					opacity: 0;
+				}
+			}
+			.left-title {
+				position: fixed;
+				left: 0;
+				width: 490px;
+				top: 0;
+				bottom: 0;
+			}
+			.right-content {
+				position: fixed;
+				left: 444px;
+				width: 490px;
+				top: 0;
+				bottom: 0;
+				box-shadow: -5px 0 10px #C0C0C0;
+				-webkit-box-shadow: -5px 0 10px #C0C0C0;
+			}
+			.left-title header,
+			.right-content header {
+				position: absolute !important;
+			}
+			.mui-loader {
+				position: absolute;
+				top: 25%;
+				width: 100%;
+				height: 60%;
+				color: #888;
+				font-size: 14px;
+				text-align: center;
+			}
+			.mui-widthtogglein {
+				/*opacity: 1;*/
+				
+				width: 490px;
+				display: block;
+				animation-name: 'widthtogglein';
+				animation-delay: 0s;
+				animation-duration: .3s;
+				-webkit-animation-name: 'widthtogglein';
+				-webkit-animation-delay: 0s;
+				-webkit-animation-duration: .3s;
+				box-shadow: -5px 0 10px #C0C0C0;
+				-webkit-box-shadow: -5px 0 10px #C0C0C0;
+			}
+			.mui-widthtoggleout {
+				/*opacity: 0;*/
+				
+				width: 0;
+				animation-name: 'widthtoggleout';
+				animation-delay: 0s;
+				animation-duration: .3s;
+				-webkit-animation-name: 'widthtoggleout';
+				-webkit-animation-delay: 0s;
+				-webkit-animation-duration: .3s;
+				box-shadow: none;
+				-webkit-box-shadow: none;
+			}
+			@keyframes widthtogglein {
+				from {
+					/*opacity: 0;*/
+					
+					width: 0;
+					box-shadow: none;
+					-webkit-box-shadow: none;
+				}
+				to {
+					/*opacity: 1;*/
+					
+					width: 490px;
+					box-shadow: -5px 0 10px #C0C0C0;
+					-webkit-box-shadow: -5px 0 10px #C0C0C0;
+				}
+			}
+			@-webkit-keyframes widthtogglein {
+				from {
+					/*opacity: 0;*/
+					
+					width: 0;
+					box-shadow: none;
+					-webkit-box-shadow: none;
+				}
+				to {
+					opacity: 1;
+					width: 490px;
+					box-shadow: -5px 0 10px #C0C0C0;
+					-webkit-box-shadow: -5px 0 10px #C0C0C0;
+				}
+			}
+			@keyframes widthtoggleout {
+				from {
+					/*opacity: 1;*/
+					
+					width: 490px;
+					box-shadow: -5px 0 10px #C0C0C0;
+					-webkit-box-shadow: -5px 0 10px #C0C0C0;
+				}
+				to {
+					/*opacity: 0;*/
+					
+					width: 0;
+					box-shadow: none;
+					-webkit-box-shadow: none;
+				}
+			}
+			@-webkit-keyframes widthtoggleout {
+				from {
+					/*opacity: 1;*/
+					
+					width: 490px;
+					box-shadow: -5px 0 10px #C0C0C0;
+					-webkit-box-shadow: -5px 0 10px #C0C0C0;
+				}
+				to {
+					/*opacity: 0;*/
+					
+					width: 0;
+					box-shadow: none;
+					-webkit-box-shadow: none;
+				}
+			}
+			.mui-content {
+				overflow-y: auto;
+				height: 100%;
+			}
+			.right-content .mui-content {
+				background: #f6f2ef;
+				width: initial;
+			}
+			.right-content .mui-content img {
+				width: 490px;
+				display: block;
+			}
+			.right-content .mui-content video {
+				width: 490px;
+				display: block;
+				margin: 0 auto;
+				object-fit: cover;
+			}
+			.mui-table-view .mui-media-body {
+				padding-top: 10px;
+			}
+			.mui-table-view-cell:after {
+				box-shadow: 0 0 0 1px #d9d9d9;
+				height: 0;
+			}
+			.mui-table-view-cell:last-child:after {
+				left: 0;
+			}
+			.mui-table-view:after {
+				height: 0;
+			}
+		</style>
+		<link rel="stylesheet" type="text/css" href="css/zoom.css" />
+	</head>
+
+	<body>
+		<div class="left-title">
+
+			<header class="mui-bar mui-bar-nav">
+				<h1 class="mui-title my-title" id="title"></h1>
+			</header>
+			<div class="mui-page-content">
+				<!--回弹-->
+				<div class="mui-scroll-wrapper">
+					<div class="mui-content mui-scroll">
+					</div>
+					<div class="mui-scrollbar mui-scrollbar-vertical">
+						<div class="mui-scrollbar-indicator"></div>
+					</div>
+				</div>
+			</div>
+			<footer class="too_footer">
+				<img src="images/logo2.png" />
+			</footer>
+
+		</div>
+		<div id="rightcontent">
+
+		</div>
+		<script type="text/javascript">
+			var menu = null,
+				main = null;
+			var showMenu = false;
+			mui.init({
+				swipeBack: false,
+				gestureConfig: {
+					doubletap: true
+				}
+			});
+			mui.plusReady(function() {
+				main = plus.webview.getLaunchWebview();
+				menu = plus.webview.getWebviewById('index-menu');
+			});
+		</script>
+		<script type="text/javascript">
+			var titleElem = document.getElementById("title");
+			 //添加事件，接收来自menu页的参数
+			window.addEventListener('showtoo', function(e) {
+				console.log(e.detail.id)
+				if (e.detail.id) {
+					titleElem.classList.add('mui-fadein');
+					titleElem.innerText = e.detail.text;
+					Array.prototype.forEach.call(document.querySelectorAll(".tooitems"), function(t) {
+						t.classList.remove('mui-fadein');
+						t.classList.add('mui-fadeout');
+						t.style.display = 'none';
+						if (+t.id == +e.detail.id) {
+							t.style.display = 'block';
+							t.classList.remove('mui-fadeout');
+							t.classList.add('mui-fadein');
+						}
+					});
+					setTimeout(function() {
+						titleElem.classList.remove('mui-fadein');
+					}, 1000)
+				}
+			});
+		</script>
+		<script id="templ" type="text/html">
+			{{each nitems as tmp i}}
+			<div class="tooitems" id="{{tmp.cid}}" {{if i!==0 }} style='display: none;' {{/if}}>
+				<ul class="mui-table-view">
+					{{each tmp.detail as de j}}
+					<li class="mui-table-view-cell">
+						<a class="mui-navigate-right" data-title="{{de.title}}" id="left_{{de.id}}" data-go="right_{{de.id}}">
+							<img class="mui-media-object mui-pull-left" src="{{de.localPath||'images/buya.png'}}">
+							<div class="mui-media-body">
+								{{de.title}}
+							</div>
+						</a>
+					</li>
+					{{/each}}
+				</ul>
+			</div>
+			{{/each}}
+		</script>
+		<script type="text/html" id="templright">
+			{{each nitems as tmp i}} {{each tmp.detail as de j}}
+			<div class="right-content" data-id='{{de.id}}' data-form="left_{{de.id}}" id="right_{{de.id}}" style=' {{if i==0&&j==0 }}display: block;{{else}}display: none;{{/if}}'>
+				<header class="mui-bar mui-bar-nav">
+					<h1 class="mui-title" id="content-title">{{de.title}}</h1>
+				</header>
+				<div class="mui-content">
+					<div class="mui-loader">加载中...</div>
+				</div>
+			</div>
+			{{/each}} {{/each}}
+		</script>
+		<script type="text/html" id="templcontent">
+			<div class="mui-content-padded">
+				{{each cts as ct i}} {{if ct.type=="img"}}
+				<img src="{{ct.iPath}}" class="mui-action-preview" data-preview-src="" data-preview-group="{{cts[0].guid}}" data-id="{{ct.ihash}}" /> {{else}}
+				<video src="{{ct.vPath}}" poster="{{ct.iPath}}" controls></video>
+				{{/if}} {{/each}}
+			</div>
+		</script>
+		<script src="js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/html5sql.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/tool.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/async.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/common.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/mui.zoom.js"></script>
+		<script src="js/mui.previewimage.js"></script>
+		<script src="js/huitan.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			var showid,
+				showListCache = []; //对展示内容列表做缓存，数组大小为3
+			Too.dbReady(function() {
+				Too.getCatList(function(cats) {
+					document.querySelector(".left-title .mui-title").innerText = cats.length > 0 ? cats[0].name : '';
+					var tmpitems = [];
+					common.async(cats, function(cat, cb) {
+						Too.getItemList(+cat.id, function(its) {
+							var tmpitem = {};
+							tmpitem.cid = cat.id;
+							tmpitem.detail = its;
+							tmpitems.push(tmpitem);
+							cb();
+						});
+					}, function() {
+						var html = template('templ', {
+							nitems: tmpitems
+						});
+						mui('.mui-content')[0].innerHTML = html;
+						var html2 = template('templright', {
+							nitems: tmpitems
+						});
+						document.getElementById("rightcontent").innerHTML = html2;
+						bindEvent();
+						setTimeout(function() {
+							if (tmpitems.length > 0 && tmpitems[0].detail.length > 0) {
+								showid = tmpitems[0].detail[0].id;
+								setRightHtml(showid);
+								showid = "right_" + showid;
+							}
+						}, 1000);
+					})
+				});
+			});
+
+			function setRightHtml(iid) {
+				Too.dbReady(function() {
+					Too.getContentList(iid, function(cts) {
+						var html = template('templcontent', {
+							cts: cts
+						});
+						var content = document.getElementById("right_" + iid).querySelector('.mui-content');
+						content.innerHTML = html;
+						Array.prototype.forEach.call(content.querySelectorAll('video'), function(v) {
+							videoF.videoEvent(v);
+						});
+						showListCache.push('right_' + iid);
+						if (showListCache.length > 3) {
+							//先进先出，内存优化
+							var clearId = showListCache.shift();
+							console.log("clear:" + clearId);
+							document.getElementById(clearId).querySelector('.mui-content').innerHTML = '<div class="mui-loader">加载中...</div>';
+						}
+					});
+				});
+			};
+			var bindEvent = function() {
+				var titleElem = document.getElementById("content-title");
+				mui("ul").on('tap', 'a', function() {
+					var _this = this;
+					var rightcontent = document.getElementById(_this.getAttribute('data-go'));
+					if (showid && showid != rightcontent.id) {
+						//暂停当前播放的视频
+						videoF.pausedVBeforeChangeLi();
+						var hidec = document.getElementById(showid);
+						rightcontent.style.display = 'block';
+						rightcontent.classList.remove('mui-fadeout');
+						rightcontent.classList.add('mui-fadein');
+						setTimeout(function() {
+							hidec.style.display = 'none';
+							hidec.classList.remove('mui-fadein');
+							hidec.classList.add('mui-fadeout');
+						}, 1000);
+					} else {
+						rightcontent.style.display = 'block';
+						rightcontent.classList.remove('mui-fadeout');
+						rightcontent.classList.add('mui-fadein');
+					}
+					if (rightcontent.querySelectorAll('.mui-content img').length == 0) {
+						setRightHtml(rightcontent.getAttribute('data-id'));
+					}
+					showid = rightcontent.id;
+				});
+				mui('.btnclose').each(function() {
+					var _this = this;
+					this.addEventListener('tap', function() {
+						var rightcontent = _this.parentElement.parentElement;
+						rightcontent.classList.remove('mui-widthtogglein');
+						rightcontent.classList.add('mui-widthtoggleout');
+					});
+				});
+				bindScroll();
+				mui.previewImage();
+			};
+
+			function bindScroll() {
+				var lefts = document.querySelectorAll(".left-title .mui-content .tooitems");
+				Array.prototype.forEach.call(lefts, function(lf) {
+					var ulheight = lf.querySelectorAll('ul li').length * 60;
+					console.log(ulheight);
+					if (ulheight <= 420) {
+						huitan.init(lf);
+					}
+				});
+			}
+		</script>
+		<script type="text/javascript">
+			var videoF = (function() {
+				var tmpV = {};
+				var video_playing;
+				/**
+				 * @description 切换内容列时暂停当前播放的视频
+				 */
+				function pausedVBeforeChangeLi() {
+					if (video_playing && !video_playing.ended && !video_playing.paused) {
+						video_playing.pause();
+					}
+				};
+				tmpV.pausedVBeforeChangeLi = pausedVBeforeChangeLi;
+				/**
+				 * @description 播放全屏 暂不可用
+				 * @param {Object} element
+				 */
+				function launchFullScreen(element) {
+					if (element.requestFullScreen) {
+						element.requestFullScreen();
+					} else if (element.mozRequestFullScreen) {
+						element.mozRequestFullScreen();
+					} else if (element.webkitRequestFullScreen) {
+						element.webkitRequestFullScreen();
+					}
+				};
+				/**
+				 * @description 取消全屏 暂不可用
+				 * @param {Object} elem
+				 */
+				function cancelFullScrren(elem) {
+					elem = elem || document;
+					if (elem.cancelFullScrren) {
+						elem.cancelFullScrren();
+					} else if (elem.mozCancelFullScreen) {
+						elem.mozCancelFullScreen();
+					} else if (elem.webkitCancelFullScreen) {
+						console.log("webkitCancelFullScreen");
+						elem.webkitCancelFullScreen();
+					}
+				};
+				/**
+				 * @return 返回支持的全屏函数
+				 * @param {Object} elem
+				 */
+				function fullscreen(elem) {
+					var prefix = 'webkit';
+					if (elem[prefix + 'EnterFullScreen']) {
+						return prefix + 'EnterFullScreen';
+					} else if (elem[prefix + 'RequestFullScreen']) {
+						return prefix + 'RequestFullScreen';
+					};
+					return false;
+				};
+				/**
+				 * @description video相关事件的绑定
+				 * @param {Object} v
+				 */
+				function videoEvent(v) {
+					var video = v,
+						doc = document;
+					video.addEventListener('play', function() {
+						//每次只能播放一个视频对象
+						if (video_playing && video_playing !== this) {
+							console.log('multi')
+							pausedVBeforeChangeLi();
+						}
+						video_playing = this;
+						console.log('play');
+						var fullscreenvideo = fullscreen(video);
+						video[fullscreenvideo]();
+					});
+					video.addEventListener('click', function() {
+						console.log('click')
+						if (this.paused) {
+							console.log('paused');
+							this.play();
+						} else {
+							var fullscreenvideo = fullscreen(video);
+							video[fullscreenvideo]();
+						}
+					})
+					video.addEventListener('pause', function(e) {
+						this.webkitExitFullScreen();
+					});
+					video.addEventListener("webkitfullscreenchange", function(e) {
+						console.log(3);
+						if (!doc.webkitIsFullScreen) { //退出全屏暂停视频
+							video.pause();
+						};
+					}, false);
+					video.addEventListener("fullscreenchange ", function(e) {
+						console.log(31);
+						if (!doc.webkitIsFullScreen) { //退出全屏暂停视频
+							video.pause();
+						};
+					}, false);
+					video.addEventListener('ended', function() {
+						console.log(4)
+						this.webkitExitFullScreen();
+					}, false);
+				};
+				tmpV.videoEvent = videoEvent;
+				return tmpV;
+			}());
+		</script>
+	</body>
+
+</html>

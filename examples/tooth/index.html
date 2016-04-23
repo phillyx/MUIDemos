@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title></title>
+		<script src="js/mui.min.js"></script>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<style>
+			html,
+			body {
+				height: 100%;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<script type="text/javascript">
+			var menu = null,
+				main = null;
+			var showMenu = false;
+			mui.init({
+				swipeBack: false,
+				gestureConfig: {
+					doubletap: true
+				},
+				subpages: [{
+					id: 'index-title',
+					url: 'index-title.html',
+					styles: {
+						left: '90px',
+						width: '934px',
+						scrollIndicator: 'none'
+					},
+					show: {
+						aniShow: 'none'
+					}
+				}, {
+					id: 'index-menu',
+					url: 'index-menu.html',
+					styles: {
+						left: 0,
+						width: '90px',
+					},
+					show: {
+						aniShow: 'none'
+					}
+				}]
+			});
+			mui.plusReady(function() {
+				//仅支持横屏显示
+				plus.screen.lockOrientation("landscape");
+				main = plus.webview.currentWebview();
+				setStatusBarBackgroud();
+			});
+
+			function setStatusBarBackgroud() {
+				if (mui.os.ios) {
+					plus.navigator.setStatusBarStyle("UIStatusBarStyleBlackOpaque");
+					plus.navigator.setStatusBarBackground("rgb(0,0,0)");
+				}
+			};
+		</script>
+		<script src="js/quit.js" type="text/javascript" charset="utf-8"></script>
+	</body>
+
+</html>

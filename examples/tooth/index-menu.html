@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="css/mui.min.css">
+		<style type="text/css">
+			html,
+			body {
+				height: 100%;
+			}
+			body {
+				background-image: url(images/bg.png);
+				background-repeat: no-repeat;
+				background-size: cover;
+				background-color: #007AFF;
+				color: #fff;
+			}
+			.my-header{
+				width: 100%;
+				height: 60px;
+			}
+			.my-header img{
+				width: inherit;
+				object-fit: cover;
+			}
+			.mui-content {
+				background: transparent;
+			}
+			.mui-card {
+				background: transparent;
+				border: none;
+				border-radius: none !important;
+			}
+			/*.mui-card */
+			
+			.mui-table-view {
+				background: transparent !important;
+			}
+			.mui-content>.mui-table-view:first-child {
+				margin-top: 0;
+			}
+			.mui-table-view:after,
+			.mui-table-view-cell:after {
+				height: 0 !important;
+			}
+			.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+				border-top: none;
+				border-left: none;
+				padding: 11px 0 !important;
+				margin-left: 0;
+			}
+			.mui-table-view.mui-grid-view .mui-table-view-cell .mui-media-body {
+				color: white;
+			}
+			.mui-col-xs-9 {
+				width: 100%;
+			}
+			.mui-table-view-cell.mui-active {
+				background-color: #007AFF !important;
+				border-radius: none;
+			}
+			.too-bottom {
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				right: 0;
+			}
+			.mui-icon {
+				color: #fff;
+			}
+			.my-active{
+				background-image: url(images/cat-active.png) !important;
+				background-repeat: no-repeat !important;
+				background-size: cover !important;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="my-header">
+			<img src="images/logo1.png"/>
+		</header>
+		<div class="mui-content">
+			<ul class="mui-table-view mui-grid-view mui-grid-9" id="Toolist">
+				<li class="mui-table-view-cell mui-media mui-col-xs-9 mui-col-sm-9">
+					<a path='0' data-text='牙齿治疗'>
+						<img src="images/too1.png" />
+						<div class="mui-media-body">牙齿治疗</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-9 mui-col-sm-9">
+					<a path='1' data-text='牙周治疗'>
+						<img src="images/too2.png" />
+						<div class="mui-media-body">牙周治疗</div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell mui-media mui-col-xs-9 mui-col-sm-9">
+					<a path='2' data-text='牙齿美容'>
+						<img src="images/too3.png" />
+						<div class="mui-media-body">牙齿美容</div>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<footer class="too-bottom">
+			<ul class="mui-table-view mui-grid-view mui-grid-9">
+				<li class="mui-table-view-cell mui-media mui-col-xs-9 mui-col-sm-9">
+					<a>
+						<span class="mui-icon mui-icon-gear"></span>
+						<div class="mui-media-body">设置</div>
+					</a>
+				</li>
+			</ul>
+		</footer>
+		<!--
+        	作者：1020450921@qq.com
+        	时间：2015-07-31
+        	描述：测试时图标暂无，正式时将替换图标为图片，dom元素要更改
+        -->
+		<script type="text/html" id="templ">
+			{{each cats as cat i}}
+			<li class="mui-table-view-cell mui-media mui-col-xs-9 mui-col-sm-9 {{if i==0}}my-active{{/if}}">
+				<a path='{{cat.id}}' data-text='{{cat.name}}'>
+					<img src="{{cat.localPath||'images/buya.png'}}" />
+					<div class="mui-media-body">{{cat.name}}</div>
+				</a>
+			</li>
+			{{/each}}
+		</script>
+		<script src="js/mui.min.js"></script>
+		<script src="js/template.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/html5sql.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/tool.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/async.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/common.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript" charset="utf-8">
+			Too.dbReady(function() {
+				Too.getCatList(function(rows) {
+					var html = template('templ', {
+						cats: rows
+					});
+					document.querySelector("#Toolist").innerHTML = html;
+				})
+			});
+			var main = null,
+				self = null;
+			mui.plusReady(function() {
+				//获得主页面webview引用；
+				self = plus.webview.currentWebview();
+				main = self.opener();
+				bindEv();
+			});
+
+			function bindEv() {
+				mui('ul').on('tap', 'a', function() {
+					var path = this.getAttribute('path');
+					var te = this.getAttribute('data-text');
+					if (!path) {
+						var _this = this;
+						var set = plus.webview.create("setting.html", this.href, {
+							left: '25%',
+							right:'25%',
+							top: '20%',
+							bottom: '20%',
+							zindex: 100
+						});
+						main.setStyle({
+							mask: 'rgba(0,0,0,0.4)',
+						});
+						self.setStyle({
+							mask: 'rgba(0,0,0,0.4)',
+						})
+						set.show();
+						return;
+					}
+					Array.prototype.forEach.call(common.getAllDomBrothers(this.parentNode),function (i) {
+						i.classList.remove('my-active');
+					});
+					this.parentNode.classList.add('my-active');
+					mui.fire(plus.webview.getWebviewById('index-title'), 'showtoo', {
+						id: path,
+						text: te
+					});
+				})
+			};
+		</script>
+	</body>
