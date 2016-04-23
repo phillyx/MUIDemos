@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="css/mui.min.css">
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			.mui-loader {
+				position: absolute;
+				top: 25%;
+				width: 100%;
+				height: 60%;
+				color: #888;
+				font-size: 14px;
+				text-align: center;
+			}
+			header {
+				border-left: 1px solid #555555;
+			}
+			.mui-fadein {
+				opacity: 1;
+				animation-name: 'fadein';
+				animation-delay: 0s;
+				animation-duration: 1s;
+				-webkit-animation-name: 'fadein';
+				-webkit-animation-delay: 0s;
+				-webkit-animation-duration: 1s;
+			}
+			.mui-fadeout {
+				opacity: 0;
+				animation-name: 'fadeout';
+				animation-delay: 0s;
+				animation-duration: 1s;
+				-webkit-animation-name: 'fadeout';
+				-webkit-animation-delay: 0s;
+				-webkit-animation-duration: 1s;
+			}
+			@keyframes fadein {
+				from {
+					opacity: 0;
+				}
+				to {
+					opacity: 1;
+				}
+			}
+			@-webkit-keyframes fadein {
+				from {
+					opacity: 0;
+				}
+				to {
+					opacity: 1;
+				}
+			}
+			@keyframes fadeout {
+				from {
+					opacity: 1;
+				}
+				to {
+					opacity: 0;
+				}
+			}
+			@-webkit-keyframes fadeout {
+				from {
+					opacity: 1;
+				}
+				to {
+					opacity: 0;
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a id="menu" class="mui-action-menu mui-icon mui-icon-bars mui-pull-right" style="display: none;"></a>
+			<h1 id="title" class="mui-title">补牙</h1>
+		<button id="btnClose" type="button" class="mui-btn mui-btn-blue mui-btn-link mui-pull-right">关闭</button>
+		</header>
+		<div class="mui-loader">加载中...</div>
+	</body>
+	<script src="js/mui.min.js"></script>
+	<script type="text/javascript">
+		 //启用双击监听
+		mui.init({
+			gestureConfig: {
+				doubletap: true
+			}
+		});
+		var contentWebview = null,
+			self = null;
+		var titleElem = document.getElementById("title");
+		mui.plusReady(function() {
+			self = plus.webview.currentWebview();
+		});
+		var menu = document.getElementById("menu")
+		 window.addEventListener("updateHeader", function(e) {
+		 	self.show('slide-in-left',300);
+			var title = e.detail.title;
+			titleElem.innerHTML = title;
+			titleElem.className = "mui-title mui-fadein";
+			setTimeout(function() {
+				titleElem.className = "mui-title";
+			}, 1000)
+		});
+	    document.getElementById("btnClose").addEventListener('tap',function () {
+	    	self.hide('auto',300);
+	    })
+	</script>
+
+</html>
