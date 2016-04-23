@@ -151,11 +151,11 @@ var common =
 				};
 			}
 		};
-		com.androidMarket(pname) {
+		com.androidMarket = function(pname) {
 			plus.runtime.openURL("market://details?id=" + pname);
 		};
 
-		com.iosAppstore(url) {
+		com.iosAppstore = function (url) {
 			plus.runtime.openURL("itms-apps://" + url);
 		};
 		return com;

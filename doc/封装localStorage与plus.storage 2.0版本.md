@@ -87,5 +87,5 @@ void myStorage.removeItemBykeys(keys,cb)
 - - -
 代码已分享到github
 地址在[https://github.com/phillyx/MUIDemos/tree/master/js/myStorage.js](https://github.com/phillyx/MUIDemos/tree/master/js/myStorage.js)
-也可直接使用压缩后的代码[https://github.com/phillyx/MUIDemos/tree/master/dist/common.js](https://github.com/phillyx/MUIDemos/tree/master/dist/common.js)
+也可直接使用合并后的代码[https://github.com/phillyx/MUIDemos/tree/master/dist/common.js](https://github.com/phillyx/MUIDemos/tree/master/dist/common.js)
 

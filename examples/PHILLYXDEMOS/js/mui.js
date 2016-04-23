@@ -1,6 +1,7 @@
 /*!
  * =====================================================
- * Mui v2.3.0 (https://github.com/dcloudio/mui)
+ * Mui v2.8.1 (http://dev.dcloud.net.cn/mui)
+ * Edit by phillyx(github: https://github.com/phillyx/; blog: http://www.cnblogs.com/phillyx;  email: 1020450921@qq.com)
  * =====================================================
  */
 /**
@@ -191,25 +192,6 @@ var mui = (function(document, undefined) {
 		return this;
 	};
 	/**
-	 * map
-	 */
-	$.map = function(elements, callback) {
-		var value, values = [],
-			i, key;
-		if (typeof elements.length === 'number') { //TODO 此处逻辑不严谨，可能会有Object:{a:'b',length:1}的情况未处理
-			for (i = 0, len = elements.length; i < len; i++) {
-				value = callback(elements[i], i);
-				if (value != null) values.push(value);
-			}
-		} else {
-			for (key in elements) {
-				value = callback(elements[key], key);
-				if (value != null) values.push(value);
-			}
-		}
-		return values.length > 0 ? [].concat.apply([], values) : values;
-	};
-	/**
 	 * each
 	 * @param {type} elements
 	 * @param {type} callback
@@ -338,6 +320,15 @@ var mui = (function(document, undefined) {
 		});
 		$.hooks[type] = hooks;
 		return $.hooks[type];
+	};
+	$.removeActionByHookName = function(type, hookname) {
+		var hooks = $.hooks[type];
+		if (hooks) {
+			for (var i = 0, len = hooks.length; i < len; i++) {
+				if (hooks[i].name == hookname)
+					return hooks.splice(i, 1);
+			}
+		}
 	};
 	$.doAction = function(type, callback) {
 		if ($.isFunction(callback)) { //指定了callback
@@ -489,339 +480,23 @@ var mui = (function(document, undefined) {
 	detect.call($, navigator.userAgent);
 })(mui, document);
 /**
- * mui target(action>popover>modal>tab>toggle)
- */
-(function($, window, document) {
-	/**
-	 * targets
-	 */
-	$.targets = {};
-	/**
-	 * target handles
-	 */
-	$.targetHandles = [];
-	/**
-	 * register target
-	 * @param {type} target
-	 * @returns {$.targets}
-	 */
-	$.registerTarget = function(target) {
-
-		target.index = target.index || 1000;
-
-		$.targetHandles.push(target);
-
-		$.targetHandles.sort(function(a, b) {
-			return a.index - b.index;
-		});
-
-		return $.targetHandles;
-	};
-	window.addEventListener('touchstart', function(event) {
-		var target = event.target;
-		var founds = {};
-		for (; target && target !== document; target = target.parentNode) {
-			var isFound = false;
-			$.each($.targetHandles, function(index, targetHandle) {
-				var name = targetHandle.name;
-				if (!isFound && !founds[name] && targetHandle.hasOwnProperty('handle')) {
-					$.targets[name] = targetHandle.handle(event, target);
-					if ($.targets[name]) {
-						founds[name] = true;
-						if (targetHandle.isContinue !== true) {
-							isFound = true;
-						}
-					}
-				} else {
-					if (!founds[name]) {
-						if (targetHandle.isReset !== false)
-							$.targets[name] = false;
-					}
-				}
-			});
-			if (isFound) {
-				break;
-			}
-		}
-
-	});
-})(mui, window, document);
-
-/**
- * fixed trim
- * @param {type} undefined
- * @returns {undefined}
- */
-(function(undefined) {
-	if (String.prototype.trim === undefined) { // fix for iOS 3.2
-		String.prototype.trim = function() {
-			return this.replace(/^\s+|\s+$/g, '');
-		};
-	}
-	Object.setPrototypeOf = Object.setPrototypeOf || function(obj, proto) {
-		obj['__proto__'] = proto;
-		return obj;
-	};
-
-})();
-/**
- * fixed CustomEvent
- */
-(function() {
-	if (typeof window.CustomEvent === 'undefined') {
-		function CustomEvent(event, params) {
-			params = params || {
-				bubbles: false,
-				cancelable: false,
-				detail: undefined
-			};
-			var evt = document.createEvent('Events');
-			var bubbles = true;
-			for (var name in params) {
-				(name === 'bubbles') ? (bubbles = !!params[name]) : (evt[name] = params[name]);
-			}
-			evt.initEvent(event, bubbles, true);
-			return evt;
-		};
-		CustomEvent.prototype = window.Event.prototype;
-		window.CustomEvent = CustomEvent;
-	}
-})();
-/**
- * mui fixed classList
- * @param {type} document
- * @returns {undefined}
- */
-(function(document) {
-    if (!("classList" in document.documentElement) && Object.defineProperty && typeof HTMLElement !== 'undefined') {
-
-        Object.defineProperty(HTMLElement.prototype, 'classList', {
-            get: function() {
-                var self = this;
-                function update(fn) {
-                    return function(value) {
-                        var classes = self.className.split(/\s+/),
-                                index = classes.indexOf(value);
-
-                        fn(classes, index, value);
-                        self.className = classes.join(" ");
-                    };
-                }
-
-                var ret = {
-                    add: update(function(classes, index, value) {
-                        ~index || classes.push(value);
-                    }),
-                    remove: update(function(classes, index) {
-                        ~index && classes.splice(index, 1);
-                    }),
-                    toggle: update(function(classes, index, value) {
-                        ~index ? classes.splice(index, 1) : classes.push(value);
-                    }),
-                    contains: function(value) {
-                        return !!~self.className.split(/\s+/).indexOf(value);
-                    },
-                    item: function(i) {
-                        return self.className.split(/\s+/)[i] || null;
-                    }
-                };
-
-                Object.defineProperty(ret, 'length', {
-                    get: function() {
-                        return self.className.split(/\s+/).length;
-                    }
-                });
-
-                return ret;
-            }
-        });
-    }
-})(document);
-
-/**
- * mui fixed requestAnimationFrame
- * @param {type} window
- * @returns {undefined}
- */
-(function(window) {
-	if (!window.requestAnimationFrame) {
-		var lastTime = 0;
-		window.requestAnimationFrame = window.webkitRequestAnimationFrame || function(callback, element) {
-			var currTime = new Date().getTime();
-			var timeToCall = Math.max(0, 16.7 - (currTime - lastTime));
-			var id = window.setTimeout(function() {
-				callback(currTime + timeToCall);
-			}, timeToCall);
-			lastTime = currTime + timeToCall;
-			return id;
-		};
-		window.cancelAnimationFrame = window.webkitCancelAnimationFrame || window.webkitCancelRequestAnimationFrame || function(id) {
-			clearTimeout(id);
-		};
-	};
-}(window));
-/**
- * fastclick(only for radio,checkbox)
- */
-(function($, window, name) {
-	if (window.FastClick) {
-		return;
-	}
-
-	var handle = function(event, target) {
-		if (target.tagName === 'LABEL') {
-			if (target.parentNode) {
-				target = target.parentNode.querySelector('input');
-			}
-		}
-		if (target && (target.type === 'radio' || target.type === 'checkbox')) {
-			if (!target.disabled) { //disabled
-				return target;
-			}
-		}
-		return false;
-	};
-
-	$.registerTarget({
-		name: name,
-		index: 40,
-		handle: handle,
-		target: false
-	});
-	var dispatchEvent = function(event) {
-		var targetElement = $.targets.click;
-		if (targetElement) {
-			var clickEvent, touch;
-			// On some Android devices activeElement needs to be blurred otherwise the synthetic click will have no effect
-			if (document.activeElement && document.activeElement !== targetElement) {
-				document.activeElement.blur();
-			}
-			touch = event.detail.gesture.changedTouches[0];
-			// Synthesise a click event, with an extra attribute so it can be tracked
-			clickEvent = document.createEvent('MouseEvents');
-			clickEvent.initMouseEvent('click', true, true, window, 1, touch.screenX, touch.screenY, touch.clientX, touch.clientY, false, false, false, false, 0, null);
-			clickEvent.forwardedTouchEvent = true;
-			targetElement.dispatchEvent(clickEvent);
-			event.detail && event.detail.gesture.preventDefault();
-		}
-	};
-	window.addEventListener('tap', dispatchEvent);
-	window.addEventListener('doubletap', dispatchEvent);
-	//捕获
-	window.addEventListener('click', function(event) {
-		if ($.targets.click) {
-			if (!event.forwardedTouchEvent) { //stop click
-				if (event.stopImmediatePropagation) {
-					event.stopImmediatePropagation();
-				} else {
-					// Part of the hack for browsers that don't support Event#stopImmediatePropagation
-					event.propagationStopped = true;
-				}
-				event.stopPropagation();
-				event.preventDefault();
-				return false;
-			}
-		}
-	}, true);
-
-})(mui, window, 'click');
-(function($, document) {
-	$(function() {
-		if (!$.os.ios) {
-			return;
-		}
-		var CLASS_FOCUSIN = 'mui-focusin';
-		var CLASS_BAR_TAB = 'mui-bar-tab';
-		var CLASS_BAR_FOOTER = 'mui-bar-footer';
-		var CLASS_BAR_FOOTER_SECONDARY = 'mui-bar-footer-secondary';
-		var CLASS_BAR_FOOTER_SECONDARY_TAB = 'mui-bar-footer-secondary-tab';
-		// var content = document.querySelector('.' + CLASS_CONTENT);
-		// if (content) {
-		// 	document.body.insertBefore(content, document.body.firstElementChild);
-		// }
-		document.addEventListener('focusin', function(e) {
-			if ($.os.plus) { //在父webview里边不fix
-				if (window.plus) {
-					if (plus.webview.currentWebview().children().length > 0) {
-						return;
-					}
-				}
-			}
-			var target = e.target;
-			if (target.tagName && target.tagName === 'INPUT' && (target.type === 'text' || target.type === 'search' || target.type === 'number')) {
-				if (target.disabled || target.readOnly) {
-					return;
-				}
-				document.body.classList.add(CLASS_FOCUSIN);
-				var isFooter = false;
-				for (; target && target !== document; target = target.parentNode) {
-					var classList = target.classList;
-					if (classList && classList.contains(CLASS_BAR_TAB) || classList.contains(CLASS_BAR_FOOTER) || classList.contains(CLASS_BAR_FOOTER_SECONDARY) || classList.contains(CLASS_BAR_FOOTER_SECONDARY_TAB)) {
-						isFooter = true;
-						break;
-					}
-				}
-				if (isFooter) {
-					var scrollTop = document.body.scrollHeight;
-					var scrollLeft = document.body.scrollLeft;
-					setTimeout(function() {
-						window.scrollTo(scrollLeft, scrollTop);
-					}, 20);
-				}
-			}
-		});
-		document.addEventListener('focusout', function(e) {
-			var classList = document.body.classList;
-			if (classList.contains(CLASS_FOCUSIN)) {
-				classList.remove(CLASS_FOCUSIN);
-				setTimeout(function() {
-					window.scrollTo(document.body.scrollLeft, document.body.scrollTop);
-				}, 20);
-			}
-		});
-	});
-})(mui, document);
-/**
- * mui namespace(optimization)
- * @param {type} $
- * @returns {undefined}
- */
-(function($) {
-	$.namespace = 'mui';
-	$.classNamePrefix = $.namespace + '-';
-	$.classSelectorPrefix = '.' + $.classNamePrefix;
-	/**
-	 * 返回正确的className
-	 * @param {type} className
-	 * @returns {String}
-	 */
-	$.className = function(className) {
-		return $.classNamePrefix + className;
-	};
-	/**
-	 * 返回正确的classSelector
-	 * @param {type} classSelector
-	 * @returns {String}
-	 */
-	$.classSelector = function(classSelector) {
-		return classSelector.replace(/\./g, $.classSelectorPrefix);
-	};
-	/**
-         * 返回正确的eventName
-         * @param {type} event
-         * @param {type} module
-         * @returns {String}
-         */
-	$.eventName = function(event, module) {
-		return event + ($.namespace ? ('.' + $.namespace) : '') + ( module ? ('.' + module) : '');
-	};
-})(mui);
-
-/**
  * 仅提供简单的on，off(仅支持事件委托，不支持当前元素绑定，当前元素绑定请直接使用addEventListener,removeEventListener)
  * @param {Object} $
  */
 (function($) {
+	if ('ontouchstart' in window) {
+		$.isTouchable = true;
+		$.EVENT_START = 'touchstart';
+		$.EVENT_MOVE = 'touchmove';
+		$.EVENT_END = 'touchend';
+	} else {
+		$.isTouchable = false;
+		$.EVENT_START = 'mousedown';
+		$.EVENT_MOVE = 'mousemove';
+		$.EVENT_END = 'mouseup';
+	}
+	$.EVENT_CANCEL = 'touchcancel';
+	$.EVENT_CLICK = 'click';
 
 	var _mid = 1;
 	var delegates = {};
@@ -920,7 +595,7 @@ var mui = (function(document, undefined) {
 	};
 	var findDelegateFn = function(element, event) {
 		var delegateCallbacks = delegateFns[mid(element)];
-		var result = false;
+		var result = [];
 		if (delegateCallbacks) {
 			result = [];
 			if (event) {
@@ -1024,17 +699,390 @@ var mui = (function(document, undefined) {
 	};
 })(mui);
 /**
+ * mui target(action>popover>modal>tab>toggle)
+ */
+(function($, window, document) {
+	/**
+	 * targets
+	 */
+	$.targets = {};
+	/**
+	 * target handles
+	 */
+	$.targetHandles = [];
+	/**
+	 * register target
+	 * @param {type} target
+	 * @returns {$.targets}
+	 */
+	$.registerTarget = function(target) {
+
+		target.index = target.index || 1000;
+
+		$.targetHandles.push(target);
+
+		$.targetHandles.sort(function(a, b) {
+			return a.index - b.index;
+		});
+
+		return $.targetHandles;
+	};
+	window.addEventListener($.EVENT_START, function(event) {
+		var target = event.target;
+		var founds = {};
+		for (; target && target !== document; target = target.parentNode) {
+			var isFound = false;
+			$.each($.targetHandles, function(index, targetHandle) {
+				var name = targetHandle.name;
+				if (!isFound && !founds[name] && targetHandle.hasOwnProperty('handle')) {
+					$.targets[name] = targetHandle.handle(event, target);
+					if ($.targets[name]) {
+						founds[name] = true;
+						if (targetHandle.isContinue !== true) {
+							isFound = true;
+						}
+					}
+				} else {
+					if (!founds[name]) {
+						if (targetHandle.isReset !== false)
+							$.targets[name] = false;
+					}
+				}
+			});
+			if (isFound) {
+				break;
+			}
+		}
+	});
+	window.addEventListener('click', function(event) { //解决touch与click的target不一致的问题(比如链接边缘点击时，touch的target为html，而click的target为A)
+		var target = event.target;
+		var isFound = false;
+		for (; target && target !== document; target = target.parentNode) {
+			if (target.tagName === 'A') {
+				$.each($.targetHandles, function(index, targetHandle) {
+					var name = targetHandle.name;
+					if (targetHandle.hasOwnProperty('handle')) {
+						if (targetHandle.handle(event, target)) {
+							isFound = true;
+							event.preventDefault();
+							return false;
+						}
+					}
+				});
+				if (isFound) {
+					break;
+				}
+			}
+		}
+	});
+})(mui, window, document);
+/**
+ * fixed trim
+ * @param {type} undefined
+ * @returns {undefined}
+ */
+(function(undefined) {
+	if (String.prototype.trim === undefined) { // fix for iOS 3.2
+		String.prototype.trim = function() {
+			return this.replace(/^\s+|\s+$/g, '');
+		};
+	}
+	Object.setPrototypeOf = Object.setPrototypeOf || function(obj, proto) {
+		obj['__proto__'] = proto;
+		return obj;
+	};
+
+})();
+/**
+ * fixed CustomEvent
+ */
+(function() {
+	if (typeof window.CustomEvent === 'undefined') {
+		function CustomEvent(event, params) {
+			params = params || {
+				bubbles: false,
+				cancelable: false,
+				detail: undefined
+			};
+			var evt = document.createEvent('Events');
+			var bubbles = true;
+			for (var name in params) {
+				(name === 'bubbles') ? (bubbles = !!params[name]) : (evt[name] = params[name]);
+			}
+			evt.initEvent(event, bubbles, true);
+			return evt;
+		};
+		CustomEvent.prototype = window.Event.prototype;
+		window.CustomEvent = CustomEvent;
+	}
+})();
+/*
+	A shim for non ES5 supporting browsers.
+	Adds function bind to Function prototype, so that you can do partial application.
+	Works even with the nasty thing, where the first word is the opposite of extranet, the second one is the profession of Columbus, and the version number is 9, flipped 180 degrees.
+*/
+
+Function.prototype.bind = Function.prototype.bind || function(to) {
+	// Make an array of our arguments, starting from second argument
+	var partial = Array.prototype.splice.call(arguments, 1),
+		// We'll need the original function.
+		fn = this;
+	var bound = function() {
+			// Join the already applied arguments to the now called ones (after converting to an array again).
+			var args = partial.concat(Array.prototype.splice.call(arguments, 0));
+			// If not being called as a constructor
+			if (!(this instanceof bound)) {
+				// return the result of the function called bound to target and partially applied.
+				return fn.apply(to, args);
+			}
+			// If being called as a constructor, apply the function bound to self.
+			fn.apply(this, args);
+		}
+		// Attach the prototype of the function to our newly created function.
+	bound.prototype = fn.prototype;
+	return bound;
+};
+/**
+ * mui fixed classList
+ * @param {type} document
+ * @returns {undefined}
+ */
+(function(document) {
+    if (!("classList" in document.documentElement) && Object.defineProperty && typeof HTMLElement !== 'undefined') {
+
+        Object.defineProperty(HTMLElement.prototype, 'classList', {
+            get: function() {
+                var self = this;
+                function update(fn) {
+                    return function(value) {
+                        var classes = self.className.split(/\s+/),
+                                index = classes.indexOf(value);
+
+                        fn(classes, index, value);
+                        self.className = classes.join(" ");
+                    };
+                }
+
+                var ret = {
+                    add: update(function(classes, index, value) {
+                        ~index || classes.push(value);
+                    }),
+                    remove: update(function(classes, index) {
+                        ~index && classes.splice(index, 1);
+                    }),
+                    toggle: update(function(classes, index, value) {
+                        ~index ? classes.splice(index, 1) : classes.push(value);
+                    }),
+                    contains: function(value) {
+                        return !!~self.className.split(/\s+/).indexOf(value);
+                    },
+                    item: function(i) {
+                        return self.className.split(/\s+/)[i] || null;
+                    }
+                };
+
+                Object.defineProperty(ret, 'length', {
+                    get: function() {
+                        return self.className.split(/\s+/).length;
+                    }
+                });
+
+                return ret;
+            }
+        });
+    }
+})(document);
+
+/**
+ * mui fixed requestAnimationFrame
+ * @param {type} window
+ * @returns {undefined}
+ */
+(function(window) {
+	if (!window.requestAnimationFrame) {
+		var lastTime = 0;
+		window.requestAnimationFrame = window.webkitRequestAnimationFrame || function(callback, element) {
+			var currTime = new Date().getTime();
+			var timeToCall = Math.max(0, 16.7 - (currTime - lastTime));
+			var id = window.setTimeout(function() {
+				callback(currTime + timeToCall);
+			}, timeToCall);
+			lastTime = currTime + timeToCall;
+			return id;
+		};
+		window.cancelAnimationFrame = window.webkitCancelAnimationFrame || window.webkitCancelRequestAnimationFrame || function(id) {
+			clearTimeout(id);
+		};
+	};
+}(window));
+/**
+ * fastclick(only for radio,checkbox)
+ */
+(function($, window, name) {
+	if (!$.os.android && !$.os.ios) { //目前仅识别android和ios
+		return;
+	}
+	if (window.FastClick) {
+		return;
+	}
+
+	var handle = function(event, target) {
+		if (target.tagName === 'LABEL') {
+			if (target.parentNode) {
+				target = target.parentNode.querySelector('input');
+			}
+		}
+		if (target && (target.type === 'radio' || target.type === 'checkbox')) {
+			if (!target.disabled) { //disabled
+				return target;
+			}
+		}
+		return false;
+	};
+
+	$.registerTarget({
+		name: name,
+		index: 40,
+		handle: handle,
+		target: false
+	});
+	var dispatchEvent = function(event) {
+		var targetElement = $.targets.click;
+		if (targetElement) {
+			var clickEvent, touch;
+			// On some Android devices activeElement needs to be blurred otherwise the synthetic click will have no effect
+			if (document.activeElement && document.activeElement !== targetElement) {
+				document.activeElement.blur();
+			}
+			touch = event.detail.gesture.changedTouches[0];
+			// Synthesise a click event, with an extra attribute so it can be tracked
+			clickEvent = document.createEvent('MouseEvents');
+			clickEvent.initMouseEvent('click', true, true, window, 1, touch.screenX, touch.screenY, touch.clientX, touch.clientY, false, false, false, false, 0, null);
+			clickEvent.forwardedTouchEvent = true;
+			targetElement.dispatchEvent(clickEvent);
+			event.detail && event.detail.gesture.preventDefault();
+		}
+	};
+	window.addEventListener('tap', dispatchEvent);
+	window.addEventListener('doubletap', dispatchEvent);
+	//捕获
+	window.addEventListener('click', function(event) {
+		if ($.targets.click) {
+			if (!event.forwardedTouchEvent) { //stop click
+				if (event.stopImmediatePropagation) {
+					event.stopImmediatePropagation();
+				} else {
+					// Part of the hack for browsers that don't support Event#stopImmediatePropagation
+					event.propagationStopped = true;
+				}
+				event.stopPropagation();
+				event.preventDefault();
+				return false;
+			}
+		}
+	}, true);
+
+})(mui, window, 'click');
+(function($, document) {
+	$(function() {
+		if (!$.os.ios) {
+			return;
+		}
+		var CLASS_FOCUSIN = 'mui-focusin';
+		var CLASS_BAR_TAB = 'mui-bar-tab';
+		var CLASS_BAR_FOOTER = 'mui-bar-footer';
+		var CLASS_BAR_FOOTER_SECONDARY = 'mui-bar-footer-secondary';
+		var CLASS_BAR_FOOTER_SECONDARY_TAB = 'mui-bar-footer-secondary-tab';
+		// var content = document.querySelector('.' + CLASS_CONTENT);
+		// if (content) {
+		// 	document.body.insertBefore(content, document.body.firstElementChild);
+		// }
+		document.addEventListener('focusin', function(e) {
+			if ($.os.plus) { //在父webview里边不fix
+				if (window.plus) {
+					if (plus.webview.currentWebview().children().length > 0) {
+						return;
+					}
+				}
+			}
+			var target = e.target;
+			//TODO 需考虑所有键盘弹起的情况
+			if (target.tagName && (target.tagName === 'TEXTAREA' || (target.tagName === 'INPUT' && (target.type === 'text' || target.type === 'search' || target.type === 'number')))) {
+				if (target.disabled || target.readOnly) {
+					return;
+				}
+				document.body.classList.add(CLASS_FOCUSIN);
+				var isFooter = false;
+				for (; target && target !== document; target = target.parentNode) {
+					var classList = target.classList;
+					if (classList && classList.contains(CLASS_BAR_TAB) || classList.contains(CLASS_BAR_FOOTER) || classList.contains(CLASS_BAR_FOOTER_SECONDARY) || classList.contains(CLASS_BAR_FOOTER_SECONDARY_TAB)) {
+						isFooter = true;
+						break;
+					}
+				}
+				if (isFooter) {
+					var scrollTop = document.body.scrollHeight;
+					var scrollLeft = document.body.scrollLeft;
+					setTimeout(function() {
+						window.scrollTo(scrollLeft, scrollTop);
+					}, 20);
+				}
+			}
+		});
+		document.addEventListener('focusout', function(e) {
+			var classList = document.body.classList;
+			if (classList.contains(CLASS_FOCUSIN)) {
+				classList.remove(CLASS_FOCUSIN);
+				setTimeout(function() {
+					window.scrollTo(document.body.scrollLeft, document.body.scrollTop);
+				}, 20);
+			}
+		});
+	});
+})(mui, document);
+/**
+ * mui namespace(optimization)
+ * @param {type} $
+ * @returns {undefined}
+ */
+(function($) {
+	$.namespace = 'mui';
+	$.classNamePrefix = $.namespace + '-';
+	$.classSelectorPrefix = '.' + $.classNamePrefix;
+	/**
+	 * 返回正确的className
+	 * @param {type} className
+	 * @returns {String}
+	 */
+	$.className = function(className) {
+		return $.classNamePrefix + className;
+	};
+	/**
+	 * 返回正确的classSelector
+	 * @param {type} classSelector
+	 * @returns {String}
+	 */
+	$.classSelector = function(classSelector) {
+		return classSelector.replace(/\./g, $.classSelectorPrefix);
+	};
+	/**
+         * 返回正确的eventName
+         * @param {type} event
+         * @param {type} module
+         * @returns {String}
+         */
+	$.eventName = function(event, module) {
+		return event + ($.namespace ? ('.' + $.namespace) : '') + ( module ? ('.' + module) : '');
+	};
+})(mui);
+
+/**
  * mui gestures
  * @param {type} $
  * @param {type} window
  * @returns {undefined}
  */
 (function($, window) {
-	$.EVENT_START = 'touchstart';
-	$.EVENT_MOVE = 'touchmove';
-	$.EVENT_END = 'touchend';
-	$.EVENT_CANCEL = 'touchcancel';
-	$.EVENT_CLICK = 'click';
 	$.gestures = {
 		session: {}
 	};
@@ -1341,8 +1389,14 @@ var mui = (function(document, undefined) {
 		touch.direction = direction;
 	};
 	var targetIds = {};
+	var convertTouches = function(touches) {
+		for (var i = 0; i < touches.length; i++) {
+			!touches['identifier'] && (touches['identifier'] = 0);
+		}
+		return touches;
+	};
 	var getTouches = function(event, touch) {
-		var allTouches = $.slice.call(event.touches || event);
+		var allTouches = convertTouches($.slice.call(event.touches || [event]));
 
 		var type = event.type;
 
@@ -1359,7 +1413,7 @@ var mui = (function(document, undefined) {
 			var i = 0;
 			var targetTouches = [];
 			var changedTargetTouches = [];
-			var changedTouches = $.slice.call(event.changedTouches || event);
+			var changedTouches = convertTouches($.slice.call(event.changedTouches || [event]));
 
 			touch.target = event.target;
 			var sessionTarget = $.gestures.session.target || event.target;
@@ -1393,7 +1447,6 @@ var mui = (function(document, undefined) {
 		targetTouches = uniqueArray(targetTouches.concat(changedTargetTouches), 'identifier', true);
 		var touchesLength = targetTouches.length;
 		var changedTouchesLength = changedTargetTouches.length;
-
 		if (type === $.EVENT_START && touchesLength - changedTouchesLength === 0) { //first
 			touch.isFirst = true;
 			$.gestures.touch = $.gestures.session = {
@@ -1418,6 +1471,9 @@ var mui = (function(document, undefined) {
 		calTouchData(touch);
 		detect(event, touch);
 		$.gestures.session.prevTouch = touch;
+		if (event.type === $.EVENT_END && !$.isTouchable) {
+			$.gestures.touch = $.gestures.session = {};
+		}
 	};
 	window.addEventListener($.EVENT_START, handleTouchEvent);
 	window.addEventListener($.EVENT_MOVE, handleTouchEvent);
@@ -1426,7 +1482,7 @@ var mui = (function(document, undefined) {
 	//fixed hashchange(android)
 	window.addEventListener($.EVENT_CLICK, function(e) {
 		//TODO 应该判断当前target是不是在targets.popover内部，而不是非要相等
-		if (($.targets.popover && e.target === $.targets.popover) || ($.targets.tab) || $.targets.offcanvas || $.targets.modal) {
+		if (($.os.android || $.os.ios) && (($.targets.popover && e.target === $.targets.popover) || ($.targets.tab) || $.targets.offcanvas || $.targets.modal)) {
 			e.preventDefault();
 		}
 	}, true);
@@ -1464,6 +1520,7 @@ var mui = (function(document, undefined) {
 				break;
 			case $.EVENT_END:
 			case $.EVENT_CANCEL:
+				touch.flick = false;
 				if (session.flickStart && options.flickMaxTime > (now - flickStartTime) && touch.distance > options.flickMinDistince) {
 					touch.flick = true;
 					touch.flickTime = now - flickStartTime;
@@ -1500,6 +1557,7 @@ var mui = (function(document, undefined) {
 		var session = $.gestures.session;
 		if (event.type === $.EVENT_END || event.type === $.EVENT_CANCEL) {
 			var options = this.options;
+			touch.swipe = false;
 			//TODO 后续根据velocity计算
 			if (touch.direction && options.swipeMaxTime > touch.deltaTime && touch.distance > options.swipeMinDistince) {
 				touch.swipe = true;
@@ -1534,7 +1592,7 @@ var mui = (function(document, undefined) {
 			case $.EVENT_START:
 				break;
 			case $.EVENT_MOVE:
-				if (!touch.direction) {
+				if (!touch.direction || !session.target) {
 					return;
 				}
 				//修正direction,可在session期间自行锁定拖拽方向，方便开发scroll类不同方向拖拽插件嵌套
@@ -1582,8 +1640,53 @@ var mui = (function(document, undefined) {
  * @returns {undefined}
  */
 (function($, name) {
+	//$.removeActionByHookName('gestures', 'tap');
+
 	var lastTarget;
 	var lastTapTime;
+	/*mui没有提供类似于jq.data('events')获取事件列表的机制
+	*使用getEventListeners,做测试。妈蛋，都只能在控制台使用
+	*添加全局变量isLongTapAtived以区分longtap和tap,然而 mui.gesture.longtap.js以下写法，无论dom有无添加longtap事件，$.isLongTapAtived = false;都执行，这样区分longtap和tap是不行的
+	* 	var handle = function(event, touch) {
+		console.log(event.target);
+		var session = $.gestures.session;
+		var options = this.options;
+		switch (event.type) {
+			case $.EVENT_START:
+				clearTimeout(timer);
+				timer = setTimeout(function() {
+					$.trigger(session.target, name, touch);
+					$.isLongTapAtived = true;
+				}, options.holdTimeout);
+				break;
+			case $.EVENT_MOVE:
+				if (touch.distance > options.holdThreshold) {
+					clearTimeout(timer);
+				}
+				break;
+			case $.EVENT_END:
+			case $.EVENT_CANCEL:
+				clearTimeout(timer);
+				break;
+		}
+	};
+	*解决方案：1目前看来只能重写tap事件并对longtap再新增一个tapOld事件了,tapOld使用框架的代码
+	* 2.$.isLongTapAtived依然添加，只是在每一次dom添加longtap事件时激活
+	* 		document.querySelector("#btn").addEventListener('longtap',function(){
+	* 		    mui.isLongTapAtived=true;
+				console.log('你触发了longtap事件');
+			});
+	*目前使用第二种方案，代码重复量少，结构清晰，没有新增手势。
+	*/
+	var getEvents = function(obj) {
+		console.log(getEventListeners(obj));
+		return typeof(getEventListeners) == "function" && getEventListeners(obj);
+	}
+	var hasEventype = function(obj, e) {
+		var es = getEvents(obj);
+		console.log(es[e]);
+		return es && !!es[e];
+	}
 	var handle = function(event, touch) {
 		var session = $.gestures.session;
 		var options = this.options;
@@ -1596,16 +1699,25 @@ var mui = (function(document, undefined) {
 				if (!target || (target.disabled || (target.classList && target.classList.contains('mui-disabled')))) {
 					return;
 				}
-				if (touch.distance < options.tapMaxDistance && touch.deltaTime < options.tapMaxTime) {
-					if ($.options.gestureConfig.doubletap && lastTarget && (lastTarget === target)) { //same target
-						if (lastTapTime && (touch.timestamp - lastTapTime) < options.tapMaxInterval) {
-							$.trigger(target, 'doubletap', touch);
-							lastTapTime = $.now();
-							lastTarget = target;
-							return;
+				if (touch.distance < options.tapMaxDistance) {
+					if (touch.deltaTime < options.tapMaxTime) {
+						if ($.options.gestureConfig.doubletap && lastTarget && (lastTarget === target)) { //same target
+							if (lastTapTime && (touch.timestamp - lastTapTime) < options.tapMaxInterval) {
+								$.trigger(target, 'doubletap', touch);
+								lastTapTime = $.now();
+								lastTarget = target;
+								return;
+							}
 						}
+						$.trigger(target, name, touch);
+					} else {
+						//如果当前对象添加了长按侦听，略过，否则仍然视为tap事件
+						//if (!hasEventype(target, 'longtap')) {
+						if (!$.isLongTapAtived) {
+							$.trigger(target, name, touch);
+						}
+						$.isLongTapAtived = false;
 					}
-					$.trigger(target, name, touch);
 					lastTapTime = $.now();
 					lastTarget = target;
 				}
@@ -1634,6 +1746,11 @@ var mui = (function(document, undefined) {
  * @returns {undefined}
  */
 (function($, name) {
+	//$.removeActionByHookName('gestures','longtap');
+	/**
+	 * @description 添加全局变量以区别longtap 和tap 事件
+	 */
+	$.isLongTapAtived = false;
 	var timer;
 	var handle = function(event, touch) {
 		var session = $.gestures.session;
@@ -1643,6 +1760,7 @@ var mui = (function(document, undefined) {
 				clearTimeout(timer);
 				timer = setTimeout(function() {
 					$.trigger(session.target, name, touch);
+					//$.isLongTapAtived = true;
 				}, options.holdTimeout);
 				break;
 			case $.EVENT_MOVE:
@@ -1840,6 +1958,61 @@ var mui = (function(document, undefined) {
 	$.addInit = function(init) {
 		return $.addAction('inits', init);
 	};
+	/**
+	 * 处理html5版本subpages 
+	 */
+	$.addInit({
+		name: 'iframe',
+		index: 100,
+		handle: function() {
+			var options = $.options;
+			var subpages = options.subpages || [];
+			if (!$.os.plus && subpages.length) {
+				//暂时只处理单个subpage。后续可以考虑支持多个subpage
+				createIframe(subpages[0]);
+			}
+		}
+	});
+	var createIframe = function(options) {
+		var wrapper = document.createElement('div');
+		wrapper.className = 'mui-iframe-wrapper';
+		var styles = options.styles || {};
+		if (typeof styles.top !== 'string') {
+			styles.top = '0px';
+		}
+		if (typeof styles.bottom !== 'string') {
+			styles.bottom = '0px';
+		}
+		wrapper.style.top = styles.top;
+		wrapper.style.bottom = styles.bottom;
+		var iframe = document.createElement('iframe');
+		iframe.src = options.url;
+		iframe.id = options.id || options.url;
+		iframe.name = iframe.id;
+		wrapper.appendChild(iframe);
+		document.body.appendChild(wrapper);
+		//目前仅处理微信
+		$.os.wechat && handleScroll(wrapper, iframe);
+	};
+
+	function handleScroll(wrapper, iframe) {
+		var key = 'MUI_SCROLL_POSITION_' + document.location.href + '_' + iframe.src;
+		var scrollTop = (parseFloat(localStorage.getItem(key)) || 0);
+		if (scrollTop) {
+			(function(y) {
+				iframe.onload = function() {
+					window.scrollTo(0, y);
+				};
+			})(scrollTop);
+		}
+		setInterval(function() {
+			var _scrollTop = window.scrollY;
+			if (scrollTop !== _scrollTop) {
+				localStorage.setItem(key, _scrollTop + '');
+				scrollTop = _scrollTop;
+			}
+		}, 100);
+	};
 	$(function() {
 		var classList = document.body.classList;
 		var os = [];
@@ -1915,7 +2088,7 @@ var mui = (function(document, undefined) {
 	 * @returns {Object}
 	 */
 	$.waitingOptions = function(options) {
-		return $.extend({
+		return $.extend(true, {}, {
 			autoShow: true,
 			title: ''
 		}, options);
@@ -1926,7 +2099,7 @@ var mui = (function(document, undefined) {
 	 * @returns {Object}
 	 */
 	$.showOptions = function(options) {
-		return $.extend(true,{},defaultShow, options);
+		return $.extend(true, {}, defaultShow, options);
 	};
 	/**
 	 * 窗口默认配置
@@ -2026,10 +2199,6 @@ var mui = (function(document, undefined) {
 	 * @param {object} options 可选:参数,等待,窗口,显示配置{params:{},waiting:{},styles:{},show:{}}
 	 */
 	$.openWindow = function(url, id, options) {
-
-		if (!window.plus) {
-			return;
-		}
 		if (typeof url === 'object') {
 			options = url;
 			url = options.url;
@@ -2042,22 +2211,34 @@ var mui = (function(document, undefined) {
 				id = id || url;
 			}
 		}
+		if (!$.os.plus) {
+			//TODO 先临时这么处理：手机上顶层跳，PC上parent跳
+			if ($.os.ios || $.os.android) {
+				window.top.location.href = url;
+			} else {
+				window.parent.location.href = url;
+			}
+			return;
+		}
+		if (!window.plus) {
+			return;
+		}
+
 		options = options || {};
 		var params = options.params || {};
-		var webview, nShow, nWaiting;
-		if ($.webviews[id]) { //已缓存
-			var webviewCache = $.webviews[id];
-			webview = webviewCache.webview;
-			//需要处理用户手动关闭窗口的情况，此时webview应该是空的；
-			if (!webview || !webview.getURL()) {
-				//再次新建一个webview；
-				options = $.extend(options, {
-					id: id,
-					url: url,
-					preload: true
-				}, true);
-				webview = $.createWindow(options);
+		var webview = null,
+			webviewCache = null,
+			nShow, nWaiting;
+
+		if ($.webviews[id]) {
+			webviewCache = $.webviews[id];
+			//webview真实存在，才能获取
+			if (plus.webview.getWebviewById(id)) {
+				webview = webviewCache.webview;
 			}
+		}
+
+		if (webviewCache && webview) { //已缓存
 			//每次show都需要传递动画参数；
 			//预加载的动画参数优先级：openWindow配置>preloadPages配置>mui默认配置；
 			nShow = webviewCache.show;
@@ -2074,7 +2255,7 @@ var mui = (function(document, undefined) {
 				webview = plus.webview.getWebviewById(id);
 				if (webview) { //如果已存在
 					nShow = $.showOptions(options.show);
-					webview.show(nShow.aniShow, nShow.duration, function() {
+					nShow.autoShow && webview.show(nShow.aniShow, nShow.duration, function() {
 						triggerPreload(webview);
 						trigger(webview, 'pagebeforeshow', false);
 					});
@@ -2256,7 +2437,8 @@ var mui = (function(document, undefined) {
 		var webview;
 		if (!$.webviews[id]) { //保证执行一遍
 			//TODO 这里也有隐患，比如某个webview不是作为subpage创建的，而是作为target webview的话；
-			webview = plus.webview.create(options.url, id, options.styles, options.extras);
+			//2016-03-02 1020450921@qq.com 做测试时防止重复加载，会有一定隐患
+			webview = plus.webview.getWebviewById(id) || plus.webview.create(options.url, id, options.styles, options.extras);
 			//之前的实现方案：子窗口loaded之后再append到父窗口中；
 			//问题：部分子窗口loaded事件发生较晚，此时执行父窗口的children方法会返回空，导致父子通讯失败；
 			//     比如父页面执行完preload事件后，需触发子页面的preload事件，此时未append的话，就无法触发；
@@ -2318,20 +2500,21 @@ var mui = (function(document, undefined) {
 					}
 				});
 			} else {
-				if (subpages.length > 0) {
-					var err = document.createElement('div');
-					err.className = 'mui-error';
-					//文字描述
-					var span = document.createElement('span');
-					span.innerHTML = '在该浏览器下，不支持创建子页面，具体参考';
-					err.appendChild(span);
-					var a = document.createElement('a');
-					a.innerHTML = '"mui框架适用场景"';
-					a.href = 'http://ask.dcloud.net.cn/article/113';
-					err.appendChild(a);
-					document.body.appendChild(err);
-					console.log('在该浏览器下，不支持创建子页面');
-				}
+				//已支持iframe嵌入
+				//				if (subpages.length > 0) {
+				//					var err = document.createElement('div');
+				//					err.className = 'mui-error';
+				//					//文字描述
+				//					var span = document.createElement('span');
+				//					span.innerHTML = '在该浏览器下，不支持创建子页面，具体参考';
+				//					err.appendChild(span);
+				//					var a = document.createElement('a');
+				//					a.innerHTML = '"mui框架适用场景"';
+				//					a.href = 'http://ask.dcloud.net.cn/article/113';
+				//					err.appendChild(a);
+				//					document.body.appendChild(err);
+				//					console.log('在该浏览器下，不支持创建子页面');
+				//				}
 
 			}
 
@@ -2348,6 +2531,15 @@ var mui = (function(document, undefined) {
 			});
 
 		});
+	});
+	$.supportStatusbarOffset = function() {
+		return $.os.plus && $.os.ios && parseFloat($.os.version) >= 7;
+	};
+	$.ready(function() {
+		//标识当前环境支持statusbar
+		if ($.supportStatusbarOffset()) {
+			document.body.classList.add('mui-statusbar');
+		}
 	});
 })(mui);
 /**
@@ -2394,6 +2586,7 @@ var mui = (function(document, undefined) {
 		var action = $.targets.action;
 		if (action && action.classList.contains('mui-action-back')) {
 			$.back();
+			$.targets.action = false;
 		}
 	});
 	window.addEventListener('swiperight', function(e) {
@@ -2416,6 +2609,7 @@ var mui = (function(document, undefined) {
 			name: 'mui',
 			index: 5,
 			handle: function() {
+				//后续重新设计此处，将back放到各个空间内部实现
 				//popover
 				if ($.targets._popover && $.targets._popover.classList.contains('mui-active')) {
 					$($.targets._popover).popover('hide');
@@ -2432,6 +2626,8 @@ var mui = (function(document, undefined) {
 					previewImage.close();
 					return true;
 				}
+				//popup
+				return $.closePopup();
 			}
 		});
 	}
@@ -2479,7 +2675,7 @@ var mui = (function(document, undefined) {
 	$.menu = function() {
 		var menu = document.querySelector('.mui-action-menu');
 		if (menu) {
-			$.trigger(menu, 'touchstart'); //临时处理menu无touchstart的话，找不到当前targets的问题
+			$.trigger(menu, $.EVENT_START); //临时处理menu无touchstart的话，找不到当前targets的问题
 			$.trigger(menu, 'tap');
 		} else { //执行父窗口的menu
 			if (window.plus) {
@@ -2712,7 +2908,7 @@ var mui = (function(document, undefined) {
 		if (settings.cache === false || ((!options || options.cache !== true) && ('script' === dataType))) {
 			settings.url = appendQuery(settings.url, '_=' + $.now());
 		}
-		var mime = settings.accepts[dataType];
+		var mime = settings.accepts[dataType && dataType.toLowerCase()];
 		var headers = {};
 		var setHeader = function(name, value) {
 			headers[name.toLowerCase()] = [name, value];
@@ -2744,7 +2940,8 @@ var mui = (function(document, undefined) {
 				xhr.onreadystatechange = $.noop;
 				clearTimeout(abortTimeout);
 				var result, error = false;
-				if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 304 || (xhr.status === 0 && protocol === 'file:')) {
+				var isLocal = protocol === 'file:';
+				if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 304 || (xhr.status === 0 && isLocal && xhr.responseText)) {
 					dataType = dataType || mimeToDataType(settings.mimeType || xhr.getResponseHeader('content-type'));
 					result = xhr.responseText;
 					try {
@@ -2766,7 +2963,13 @@ var mui = (function(document, undefined) {
 						ajaxSuccess(result, xhr, settings);
 					}
 				} else {
-					ajaxError(xhr.statusText || null, xhr.status ? 'error' : 'abort', xhr, settings);
+					var status = xhr.status ? 'error' : 'abort';
+					var statusText = xhr.statusText || null;
+					if (isLocal) {
+						status = 'error';
+						statusText = '404';
+					}
+					ajaxError(statusText, status, xhr, settings);
 				}
 			}
 		};
@@ -3015,9 +3218,10 @@ var mui = (function(document, undefined) {
 				scrollY: true,
 				scrollX: false,
 				indicators: true,
-				deceleration:0.003,
+				deceleration: 0.003,
 				down: {
 					height: 50,
+					contentinit: '下拉可以刷新',
 					contentdown: '下拉可以刷新',
 					contentover: '释放立即刷新',
 					contentrefresh: '正在刷新...'
@@ -3025,6 +3229,7 @@ var mui = (function(document, undefined) {
 				up: {
 					height: 50,
 					auto: false,
+					contentinit: '上拉显示更多',
 					contentdown: '上拉显示更多',
 					contentrefresh: '正在加载...',
 					contentnomore: '没有更多数据了',
@@ -3078,7 +3283,7 @@ var mui = (function(document, undefined) {
 		_createPocket: function(clazz, options, iconClass) {
 			var pocket = document.createElement('div');
 			pocket.className = clazz;
-			pocket.innerHTML = pocketHtml.replace('{contentrefresh}', options.contentrefresh).replace('{icon}', iconClass);
+			pocket.innerHTML = pocketHtml.replace('{contentrefresh}', options.contentinit).replace('{icon}', iconClass);
 			return pocket;
 		},
 		_resetPullDownLoading: function() {
@@ -3183,6 +3388,12 @@ var mui = (function(document, undefined) {
 			fn: function(k) {
 				return Math.sqrt(1 - (--k * k));
 			}
+		},
+		outCirc: {
+			style: 'cubic-bezier(0.075, 0.82, 0.165, 1)'
+		},
+		outCubic: {
+			style: 'cubic-bezier(0.165, 0.84, 0.44, 1)'
 		}
 	}
 	var Scroll = $.Class.extend({
@@ -3197,6 +3408,7 @@ var mui = (function(document, undefined) {
 				scrollX: false, //是否横向滚动
 				startX: 0, //初始化时滚动至x
 				startY: 0, //初始化时滚动至y
+
 				indicators: true, //是否显示滚动条
 				stopPropagation: false,
 				hardwareAccelerated: true,
@@ -3206,11 +3418,16 @@ var mui = (function(document, undefined) {
 				},
 				momentum: true,
 
+				snapX: 0.5, //横向切换距离(以当前容器宽度为基准)
 				snap: false, //图片轮播，拖拽式选项卡
 
 				bounce: true, //是否启用回弹
-				bounceTime: 300, //回弹动画时间
-				bounceEasing: ease.circular.style, //回弹动画曲线
+				bounceTime: 500, //回弹动画时间
+				bounceEasing: ease.outCirc, //回弹动画曲线
+
+				scrollTime: 500,
+				scrollEasing: ease.outCubic, //轮播动画曲线
+
 
 				directionLockThreshold: 5,
 
@@ -3287,7 +3504,9 @@ var mui = (function(document, undefined) {
 			var m = 0;
 			var n = -1;
 			var x = 0;
-			var cx = 0;
+			var leftX = 0;
+			var rightX = 0;
+			var snapX = 0;
 			for (var i = 0; i < length; i++) {
 				var snap = snaps[i];
 				var offsetLeft = snap.offsetLeft;
@@ -3300,10 +3519,13 @@ var mui = (function(document, undefined) {
 					this.pages[m] = [];
 				}
 				x = this._getSnapX(offsetLeft);
-				cx = x - Math.round((offsetWidth) / 2);
+				snapX = Math.round((offsetWidth) * this.options.snapX);
+				leftX = x - snapX;
+				rightX = x - offsetWidth + snapX;
 				this.pages[m][n] = {
 					x: x,
-					cx: cx,
+					leftX: leftX,
+					rightX: rightX,
 					pageX: m,
 					element: snap
 				}
@@ -3328,7 +3550,7 @@ var mui = (function(document, undefined) {
 					this.snaps[i].classList.remove(CLASS_ACTIVE);
 				}
 			}
-			this.scrollTo(this.currentPage.x, 0, this.options.bounceTime);
+			this.scrollTo(this.currentPage.x, 0, this.options.scrollTime);
 		},
 		_nearestSnap: function(x) {
 			if (!this.pages.length) {
@@ -3339,15 +3561,14 @@ var mui = (function(document, undefined) {
 			}
 			var i = 0;
 			var length = this.pages.length;
-
 			if (x > 0) {
 				x = 0;
 			} else if (x < this.maxScrollX) {
 				x = this.maxScrollX;
 			}
-
 			for (; i < length; i++) {
-				if (x >= this.pages[i][0].cx) {
+				var nearestX = this.direction === 'left' ? this.pages[i][0].leftX : this.pages[i][0].rightX;
+				if (x >= nearestX) {
 					return this.pages[i][0];
 				}
 			}
@@ -3363,9 +3584,9 @@ var mui = (function(document, undefined) {
 
 			this.scroller[action]('webkitTransitionEnd', this);
 
-			this.wrapper[action]('touchstart', this);
-			this.wrapper[action]('touchcancel', this);
-			this.wrapper[action]('touchend', this);
+			this.wrapper[action]($.EVENT_START, this);
+			this.wrapper[action]($.EVENT_CANCEL, this);
+			this.wrapper[action]($.EVENT_END, this);
 			this.wrapper[action]('drag', this);
 			this.wrapper[action]('dragend', this);
 			this.wrapper[action]('flick', this);
@@ -3378,11 +3599,8 @@ var mui = (function(document, undefined) {
 				mui(segmentedControl)[detach ? 'off' : 'on']('click', 'a', $.preventDefault);
 			}
 
-			this.wrapper[action]('scrollend', this._handleIndicatorScrollend.bind(this));
-
-			this.wrapper[action]('scrollstart', this._handleIndicatorScrollstart.bind(this));
-
-			this.wrapper[action]('refresh', this._handleIndicatorRefresh.bind(this));
+			this.wrapper[action]('scrollstart', this);
+			this.wrapper[action]('refresh', this);
 		},
 		_handleIndicatorScrollend: function() {
 			this.indicators.map(function(indicator) {
@@ -3406,7 +3624,7 @@ var mui = (function(document, undefined) {
 			}
 
 			switch (e.type) {
-				case 'touchstart':
+				case $.EVENT_START:
 					this._start(e);
 					break;
 				case 'drag':
@@ -3418,14 +3636,19 @@ var mui = (function(document, undefined) {
 					this.options.stopPropagation && e.stopPropagation();
 					this._flick(e);
 					break;
-				case 'touchcancel':
-				case 'touchend':
+				case $.EVENT_CANCEL:
+				case $.EVENT_END:
 					this._end(e);
 					break;
 				case 'webkitTransitionEnd':
+					this.transitionTimer && this.transitionTimer.cancel();
 					this._transitionEnd(e);
 					break;
+				case 'scrollstart':
+					this._handleIndicatorScrollstart(e);
+					break;
 				case 'scrollend':
+					this._handleIndicatorScrollend(e);
 					this._scrollend(e);
 					e.stopPropagation();
 					break;
@@ -3436,11 +3659,13 @@ var mui = (function(document, undefined) {
 				case 'swiperight':
 					e.stopPropagation();
 					break;
+				case 'refresh':
+					this._handleIndicatorRefresh(e);
+					break;
 
 			}
 		},
 		_start: function(e) {
-			e.target && !this._preventDefaultException(e.target, this.options.preventDefaultException) && e.preventDefault();
 			this.moved = this.needReset = false;
 			this._transitionTime();
 			if (this.isInTransition) {
@@ -3563,7 +3788,7 @@ var mui = (function(document, undefined) {
 			if (!this.requestAnimationFrame) {
 				this._updateTranslate();
 			}
-
+			this.direction = detail.deltaX > 0 ? 'right' : 'left';
 			this.moved = true;
 			this.x = newX;
 			this.y = newY;
@@ -3629,7 +3854,7 @@ var mui = (function(document, undefined) {
 		},
 		_end: function(e) {
 			this.needReset = false;
-			if ((!this.moved && this.needReset) || e.type === 'touchcancel') {
+			if ((!this.moved && this.needReset) || e.type === $.EVENT_CANCEL) {
 				this.resetPosition();
 			}
 		},
@@ -3671,6 +3896,12 @@ var mui = (function(document, undefined) {
 				for (var i = this.indicators.length; i--;) {
 					this.indicators[i].transitionTime(time);
 				}
+			}
+			if (time) { //自定义timer，保证webkitTransitionEnd始终触发
+				this.transitionTimer && this.transitionTimer.cancel();
+				this.transitionTimer = $.later(function() {
+					$.trigger(this.scroller, 'webkitTransitionEnd');
+				}, time + 100, this);
 			}
 		},
 		_transitionTimingFunction: function(easing) {
@@ -3857,7 +4088,7 @@ var mui = (function(document, undefined) {
 			if (x == this.x && y == this.y) {
 				return false;
 			}
-			this.scrollTo(x, y, time, this.options.bounceEasing);
+			this.scrollTo(x, y, time, this.options.scrollEasing);
 
 			return true;
 		},
@@ -3868,7 +4099,9 @@ var mui = (function(document, undefined) {
 		},
 		scrollTo: function(x, y, time, easing) {
 			var easing = easing || ease.circular;
-			this.isInTransition = time > 0 && (this.lastX != x || this.lastY != y);
+			//			this.isInTransition = time > 0 && (this.lastX != x || this.lastY != y);
+			//暂不严格判断x,y，否则会导致部分版本上不正常触发轮播
+			this.isInTransition = time > 0;
 			if (this.isInTransition) {
 				this._clearRequestAnimationFrame();
 				this._transitionTimingFunction(easing.style);
@@ -3880,13 +4113,13 @@ var mui = (function(document, undefined) {
 
 		},
 		scrollToBottom: function(time, easing) {
-			time = time || this.options.bounceTime;
+			time = time || this.options.scrollTime;
 			this.scrollTo(0, this.maxScrollY, time, easing);
 		},
 		gotoPage: function(index) {
 			this._gotoPage(index);
 		},
-		destory: function() {
+		destroy: function() {
 			this._initEvent(true); //detach
 			delete $.data[this.wrapper.getAttribute('data-scroll')];
 			this.wrapper.setAttribute('data-scroll', '');
@@ -4085,6 +4318,10 @@ var mui = (function(document, undefined) {
 			}
 		},
 		_start: function(e) {
+			//仅下拉刷新在start阻止默认事件
+			if (e.touches && e.touches.length && e.touches[0].clientX > 30) {
+				e.target && !this._preventDefaultException(e.target, this.options.preventDefaultException) && e.preventDefault();
+			}
 			if (!this.loading) {
 				this.pulldown = this.pullPocket = this.pullCaption = this.pullLoading = false
 			}
@@ -4253,8 +4490,9 @@ var mui = (function(document, undefined) {
 				scrollY: false,
 				scrollX: true,
 				indicators: false,
-				bounceTime: 200,
+				scrollTime: 1000,
 				startX: false,
+				slideTime: 0, //滑动动画时间
 				snap: SELECTOR_SLIDER_ITEM
 			}, options));
 			if (this.options.startX) {
@@ -4315,7 +4553,14 @@ var mui = (function(document, undefined) {
 			}
 			var detail = e.detail;
 			detail.slideNumber = detail.slideNumber || 0;
-			var items = self.scroller.querySelectorAll(SELECTOR_SLIDER_ITEM);
+			var temps = self.scroller.querySelectorAll(SELECTOR_SLIDER_ITEM);
+			var items = [];
+			for (var i = 0, len = temps.length; i < len; i++) {
+				var item = temps[i];
+				if (item.parentNode === self.scroller) {
+					items.push(item);
+				}
+			}
 			var _slideNumber = detail.slideNumber;
 			if (self.loop) {
 				_slideNumber += 1;
@@ -4358,7 +4603,7 @@ var mui = (function(document, undefined) {
 		},
 		_handleTabShow: function(e) {
 			var self = this;
-			self.gotoItem((e.detail.tabNumber || 0), self.options.bounceTime);
+			self.gotoItem((e.detail.tabNumber || 0), self.options.slideTime);
 		},
 		_handleIndicatorTap: function(event) {
 			var self = this;
@@ -4372,17 +4617,23 @@ var mui = (function(document, undefined) {
 			var self = this;
 			self._super(detach);
 			var action = detach ? 'removeEventListener' : 'addEventListener';
-			self.wrapper[action]('swiperight', $.stopPropagation);
-			self.wrapper[action]('scrollend', self._triggerSlide.bind(this));
-
-			self.wrapper[action]('slide', self._handleSlide.bind(this));
-
-			self.wrapper[action]($.eventName('shown', 'tab'), self._handleTabShow.bind(this));
-			//indicator
-			var indicator = self.wrapper.querySelector(SELECTOR_SLIDER_INDICATOR);
-			if (indicator) {
-				indicator[action]('tap', self._handleIndicatorTap.bind(this));
+			self.wrapper[action]('slide', this);
+			self.wrapper[action]($.eventName('shown', 'tab'), this);
+		},
+		handleEvent: function(e) {
+			this._super(e);
+			switch (e.type) {
+				case 'slide':
+					this._handleSlide(e);
+					break;
+				case $.eventName('shown', 'tab'):
+					this._handleTabShow(e);
+					break;
 			}
+		},
+		_scrollend: function(e) {
+			this._super(e);
+			this._triggerSlide(e);
 		},
 		_drag: function(e) {
 			this._super(e);
@@ -4520,7 +4771,7 @@ var mui = (function(document, undefined) {
 		},
 		_gotoItem: function(slideNumber, time) {
 			this.currentPage = this._getPage(slideNumber, true); //此处传true。可保证程序切换时，动画与人手操作一致(第一张，最后一张的切换动画)
-			this.scrollTo(this.currentPage.x, 0, time, this.options.bounceEasing);
+			this.scrollTo(this.currentPage.x, 0, time, this.options.scrollEasing);
 			if (time === 0) {
 				$.trigger(this.wrapper, 'scrollend', this);
 			}
@@ -4541,17 +4792,17 @@ var mui = (function(document, undefined) {
 				this.x = this.maxScrollX;
 			}
 			this.currentPage = this._nearestSnap(this.x);
-			this.scrollTo(this.currentPage.x, 0, time);
+			this.scrollTo(this.currentPage.x, 0, time, this.options.scrollEasing);
 			return true;
 		},
 		gotoItem: function(slideNumber, time) {
-			this._gotoItem(slideNumber, typeof time === 'undefined' ? this.options.bounceTime : time);
+			this._gotoItem(slideNumber, typeof time === 'undefined' ? this.options.scrollTime : time);
 		},
 		nextItem: function() {
-			this._gotoItem(this.slideNumber + 1, this.options.bounceTime);
+			this._gotoItem(this.slideNumber + 1, this.options.scrollTime);
 		},
 		prevItem: function() {
-			this._gotoItem(this.slideNumber - 1, this.options.bounceTime);
+			this._gotoItem(this.slideNumber - 1, this.options.scrollTime);
 		},
 		getSlideNumber: function() {
 			return this.slideNumber || 0;
@@ -4560,12 +4811,12 @@ var mui = (function(document, undefined) {
 			if (options) {
 				$.extend(this.options, options);
 				this._super();
-				this.nextItem();
+				this._initTimer();
 			} else {
 				this._super();
 			}
 		},
-		destory: function() {
+		destroy: function() {
 			this._initEvent(true); //detach
 			delete $.data[this.wrapper.getAttribute('data-slider')];
 			this.wrapper.setAttribute('data-slider', '');
@@ -4616,6 +4867,7 @@ var mui = (function(document, undefined) {
 	if (!($.os.plus && $.os.android)) { //仅在android的5+版本使用
 		return;
 	}
+
 	var CLASS_PLUS_PULLREFRESH = 'mui-plus-pullrefresh';
 	var CLASS_VISIBILITY = 'mui-visibility';
 	var CLASS_HIDDEN = 'mui-hidden';
@@ -4638,6 +4890,7 @@ var mui = (function(document, undefined) {
 			var self = this;
 			//			document.addEventListener('plusscrollbottom', this);
 			window.addEventListener('dragup', self);
+			document.addEventListener("plusscrollbottom", self);
 			self.scrollInterval = window.setInterval(function() {
 				if (self.isScroll && !self.loading) {
 					if (window.pageYOffset + window.innerHeight + 10 >= document.documentElement.scrollHeight) {
@@ -4705,7 +4958,7 @@ var mui = (function(document, undefined) {
 			//				}
 			//			}
 			self.isScroll = false;
-			if (e.type === 'dragup') {
+			if (e.type === 'dragup' || e.type === 'plusscrollbottom') {
 				self.isScroll = true;
 				setTimeout(function() {
 					self.isScroll = false;
@@ -4742,15 +4995,22 @@ var mui = (function(document, undefined) {
 			}
 		},
 		pulldownLoading: function() { //该方法是子页面调用的
+			$.plusReady(function() {
+				plus.webview.currentWebview().setBounce({
+					offset: {
+						top: this.options.down.height + "px"
+					}
+				});
+			}.bind(this));
 			var callback = $.options.pullRefresh.down.callback;
 			callback && callback.call(this);
 		},
-		_pulldownLoading: function() { //该方法是子页面调用的
-			var self = this;
-			$.plusReady(function() {
-				plus.webview.getWebviewById(self.options.webviewId).evalJS("mui&&mui.options.pullRefresh.down&&mui.options.pullRefresh.down.callback()");
-			});
-		},
+		//		_pulldownLoading: function() { //该方法是子页面调用的
+		//			var self = this;
+		//			$.plusReady(function() {
+		//				plus.webview.getWebviewById(self.options.webviewId).evalJS("mui&&mui.options.pullRefresh.down&&mui.options.pullRefresh.down.callback()");
+		//			});
+		//		},
 		endPulldownToRefresh: function() { //该方法是子页面调用的
 			var webview = plus.webview.currentWebview();
 			webview.parent().evalJS("mui&&mui(document.querySelector('.mui-content')).pullRefresh('" + JSON.stringify({
@@ -4799,7 +5059,8 @@ var mui = (function(document, undefined) {
 					self.pullCaption.innerHTML = self.options.up.contentnomore;
 					//					self.bottomPocket.classList.remove(CLASS_BLOCK);
 					//					self.bottomPocket.classList.add(CLASS_HIDDEN);
-					//					document.removeEventListener('plusscrollbottom', self);
+					//取消5+的plusscrollbottom事件
+					document.removeEventListener('plusscrollbottom', self);
 					window.removeEventListener('dragup', self);
 				} else { //初始化时隐藏，后续不再隐藏
 					self.pullCaption.className = CLASS_PULL_CAPTION + ' ' + CLASS_PULL_CAPTION_DOWN;
@@ -4820,10 +5081,11 @@ var mui = (function(document, undefined) {
 			this.bottomPocket.classList.remove(CLASS_HIDDEN);
 			this.pullCaption.className = CLASS_PULL_CAPTION + ' ' + CLASS_PULL_CAPTION_DOWN;
 			this.pullCaption.innerHTML = this.options.up.contentdown;
+			document.addEventListener("plusscrollbottom", this);
 			window.addEventListener('dragup', this);
 		},
 		scrollTo: function(x, y, time) {
-			$.scrollTo(x, y, time);
+			$.scrollTo(y, time);
 		},
 		refresh: function(isReset) {
 			if (isReset && this.finished) {
@@ -4861,7 +5123,7 @@ var mui = (function(document, undefined) {
 			pullRefreshApi = $.data[id];
 		}
 		if (options.down && options.down.auto) { //如果设置了auto，则自动下拉一次
-			pullRefreshApi._pulldownLoading(); //parent webview
+			pullRefreshApi.pulldownLoading(); //parent webview
 		} else if (options.up && options.up.auto) { //如果设置了auto，则自动上拉一次
 			pullRefreshApi.pullupLoading();
 		}
@@ -4965,7 +5227,7 @@ var mui = (function(document, undefined) {
 		},
 		handleEvent: function(e) {
 			switch (e.type) {
-				case 'touchstart':
+				case $.EVENT_START:
 					e.target && !this._preventDefaultException(e.target, this.options.preventDefaultException) && e.preventDefault();
 					break;
 				case 'webkitTransitionEnd': //有个bug需要处理，需要考虑假设没有触发webkitTransitionEnd的情况
@@ -5061,21 +5323,23 @@ var mui = (function(document, undefined) {
 								this._dispatchEvent(); //此处不触发webkitTransitionEnd,所以手动dispatch
 								return;
 							}
-							if (ratio > 0 && ratio < 0.5 && direction === 'right') {
-								this.openPercentage(0);
-							} else if (ratio > 0.5 && direction === 'left') {
+							if (direction === 'right' && ratio >= 0 && (ratio >= 0.5 || detail.swipe)) { //右滑打开
 								this.openPercentage(100);
-							} else if (ratio < 0 && ratio > -0.5 && direction === 'left') {
+							} else if (direction === 'right' && ratio < 0 && (ratio > -0.5 || detail.swipe)) { //右滑关闭
 								this.openPercentage(0);
-							} else if (direction === 'right' && ratio < 0 && ratio > -0.5) {
+							} else if (direction === 'right' && ratio > 0 && ratio < 0.5) { //右滑还原关闭
 								this.openPercentage(0);
-							} else if (ratio < 0.5 && direction === 'right') {
+							} else if (direction === 'right' && ratio < 0.5) { //右滑还原打开
 								this.openPercentage(-100);
-							} else if (direction === 'right' && ratio >= 0 && (ratio >= 0.5 || detail.flick)) {
+							} else if (direction === 'left' && ratio <= 0 && (ratio <= -0.5 || detail.swipe)) { //左滑打开
+								this.openPercentage(-100);
+							} else if (direction === 'left' && ratio > 0 && (ratio <= 0.5 || detail.swipe)) { //左滑关闭
+								this.openPercentage(0);
+							} else if (direction === 'left' && ratio < 0 && ratio >= -0.5) { //左滑还原关闭
+								this.openPercentage(0);
+							} else if (direction === 'left' && ratio > 0.5) { //左滑还原打开
 								this.openPercentage(100);
-							} else if (direction === 'left' && ratio <= 0 && (ratio <= -0.5 || detail.flick)) {
-								this.openPercentage(-100);
-							} else {
+							} else { //默认关闭
 								this.openPercentage(0);
 							}
 							if (ratio === 1 || ratio === -1) { //此处不触发webkitTransitionEnd,所以手动dispatch
@@ -5087,24 +5351,22 @@ var mui = (function(document, undefined) {
 							} else {
 								ratio = (this.offCanvasLeftWidth && (x / this.offCanvasLeftWidth)) || 0;
 							}
-							if (ratio >= 0.5 && direction === 'left') {
-								this.openPercentage(0);
-							} else if (ratio > 0 && ratio <= 0.5 && direction === 'left') {
-								this.openPercentage(-100);
-							} else if (ratio >= 0.5 && direction === 'right') {
-								this.openPercentage(0);
-							} else if (ratio >= -0.5 && ratio < 0 && direction === 'left') {
+							if (direction === 'right' && ratio <= 0 && (ratio >= -0.5 || detail.swipe)) { //右滑打开
 								this.openPercentage(100);
-							} else if (ratio > 0 && ratio <= 0.5 && direction === 'right') {
-								this.openPercentage(-100);
-							} else if (ratio <= -0.5 && direction === 'right') {
+							} else if (direction === 'right' && ratio > 0 && (ratio >= 0.5 || detail.swipe)) { //右滑关闭
 								this.openPercentage(0);
-							} else if (ratio >= -0.5 && direction === 'right') {
+							} else if (direction === 'right' && ratio <= -0.5) { //右滑还原关闭
+								this.openPercentage(0);
+							} else if (direction === 'right' && ratio > 0 && ratio <= 0.5) { //右滑还原打开
+								this.openPercentage(-100);
+							} else if (direction === 'left' && ratio >= 0 && (ratio <= 0.5 || detail.swipe)) { //左滑打开
+								this.openPercentage(-100);
+							} else if (direction === 'left' && ratio < 0 && (ratio <= -0.5 || detail.swipe)) { //左滑关闭
+								this.openPercentage(0);
+							} else if (direction === 'left' && ratio >= 0.5) { //左滑还原关闭
+								this.openPercentage(0);
+							} else if (direction === 'left' && ratio >= -0.5 && ratio < 0) { //左滑还原打开
 								this.openPercentage(100);
-							} else if (ratio <= -0.5 && direction === 'left') {
-								this.openPercentage(0);
-							} else if (ratio >= -0.5 && direction === 'left') {
-								this.openPercentage(-100);
 							} else {
 								this.openPercentage(0);
 							}
@@ -5145,7 +5407,7 @@ var mui = (function(document, undefined) {
 				});
 			}
 			if (this.classList.contains('mui-draggable')) {
-				this.wrapper.addEventListener('touchstart', this); //临时处理
+				this.wrapper.addEventListener($.EVENT_START, this); //临时处理
 				this.wrapper.addEventListener('drag', this);
 				this.wrapper.addEventListener('dragend', this);
 			}
@@ -5174,7 +5436,6 @@ var mui = (function(document, undefined) {
 				}
 				this.classList[percentage !== 0 ? 'add' : 'remove'](CLASS_ACTIVE);
 			}
-
 		},
 		updateTranslate: function(x) {
 			if (x !== this.lastTranslateX) {
@@ -5556,13 +5817,13 @@ var mui = (function(document, undefined) {
 	};
 	var onPopoverShown = function(e) {
 		this.removeEventListener('webkitTransitionEnd', onPopoverShown);
-		this.addEventListener('touchmove', $.preventDefault);
+		this.addEventListener($.EVENT_MOVE, $.preventDefault);
 		$.trigger(this, 'shown', this);
 	}
 	var onPopoverHidden = function(e) {
 		setStyle(this, 'none');
 		this.removeEventListener('webkitTransitionEnd', onPopoverHidden);
-		this.removeEventListener('touchmove', $.preventDefault);
+		this.removeEventListener($.EVENT_MOVE, $.preventDefault);
 		fixedPopoverScroll(false);
 		$.trigger(this, 'hidden', this);
 	};
@@ -5570,7 +5831,7 @@ var mui = (function(document, undefined) {
 	var backdrop = (function() {
 		var element = document.createElement('div');
 		element.classList.add(CLASS_BACKDROP);
-		element.addEventListener('touchmove', $.preventDefault);
+		element.addEventListener($.EVENT_MOVE, $.preventDefault);
 		element.addEventListener('tap', function(e) {
 			var popover = $.targets._popover;
 			if (popover) {
@@ -5583,10 +5844,11 @@ var mui = (function(document, undefined) {
 
 		return element;
 	}());
+	var removeBackdropTimer;
 	var removeBackdrop = function(popover) {
 		backdrop.setAttribute('style', 'opacity:0');
 		$.targets.popover = $.targets._popover = null; //reset
-		setTimeout(function() {
+		removeBackdropTimer = $.later(function() {
 			if (!popover.classList.contains(CLASS_ACTIVE) && backdrop.parentNode && backdrop.parentNode === document.body) {
 				document.body.removeChild(backdrop);
 			}
@@ -5610,7 +5872,11 @@ var mui = (function(document, undefined) {
 
 	});
 
-	var togglePopover = function(popover, anchor) {
+	var togglePopover = function(popover, anchor, state) {
+		if ((state === 'show' && popover.classList.contains(CLASS_ACTIVE)) || (state === 'hide' && !popover.classList.contains(CLASS_ACTIVE))) {
+			return;
+		}
+		removeBackdropTimer && removeBackdropTimer.cancel(); //取消remove的timer
 		//remove一遍，以免来回快速切换，导致webkitTransitionEnd不触发，无法remove
 		popover.removeEventListener('webkitTransitionEnd', onPopoverShown);
 		popover.removeEventListener('webkitTransitionEnd', onPopoverHidden);
@@ -5740,7 +6006,7 @@ var mui = (function(document, undefined) {
 	$.createMask = function(callback) {
 		var element = document.createElement('div');
 		element.classList.add(CLASS_BACKDROP);
-		element.addEventListener('touchmove', $.preventDefault);
+		element.addEventListener($.EVENT_MOVE, $.preventDefault);
 		element.addEventListener('tap', function() {
 			mask.close();
 		});
@@ -5779,7 +6045,7 @@ var mui = (function(document, undefined) {
 		this.each(function() {
 			$.targets._popover = this;
 			if (args[0] === 'show' || args[0] === 'hide' || args[0] === 'toggle') {
-				togglePopover(this, args[1]);
+				togglePopover(this, args[1], args[0]);
 			}
 		});
 	};
@@ -5934,11 +6200,11 @@ var mui = (function(document, undefined) {
 		this.handleX = this.toggleWidth - this.handleWidth - 3;
 	};
 	Toggle.prototype.initEvent = function() {
-		this.element.addEventListener('touchstart', this);
+		this.element.addEventListener($.EVENT_START, this);
 		this.element.addEventListener('drag', this);
 		this.element.addEventListener('swiperight', this);
-		this.element.addEventListener('touchend', this);
-		this.element.addEventListener('touchcancel', this);
+		this.element.addEventListener($.EVENT_END, this);
+		this.element.addEventListener($.EVENT_CANCEL, this);
 
 	};
 	Toggle.prototype.handleEvent = function(e) {
@@ -5946,7 +6212,7 @@ var mui = (function(document, undefined) {
 			return;
 		}
 		switch (e.type) {
-			case 'touchstart':
+			case $.EVENT_START:
 				this.start(e);
 				break;
 			case 'drag':
@@ -5955,13 +6221,14 @@ var mui = (function(document, undefined) {
 			case 'swiperight':
 				this.swiperight();
 				break;
-			case 'touchend':
-			case 'touchcancel':
+			case $.EVENT_END:
+			case $.EVENT_CANCEL:
 				this.end(e);
 				break;
 		}
 	};
 	Toggle.prototype.start = function(e) {
+		this.handle.style.webkitTransitionDuration = this.element.style.webkitTransitionDuration = '.2s';
 		this.classList.add(CLASS_DRAGGING);
 		if (this.toggleWidth === 0 || this.handleWidth === 0) { //当switch处于隐藏状态时，width为0，需要重新初始化
 			this.init();
@@ -5999,8 +6266,13 @@ var mui = (function(document, undefined) {
 			this.toggle();
 		}
 	};
-	Toggle.prototype.toggle = function() {
+	Toggle.prototype.toggle = function(animate) {
 		var classList = this.classList;
+		if (animate === false) {
+			this.handle.style.webkitTransitionDuration = this.element.style.webkitTransitionDuration = '0s';
+		} else {
+			this.handle.style.webkitTransitionDuration = this.element.style.webkitTransitionDuration = '.2s';
+		}
 		if (classList.contains(CLASS_ACTIVE)) {
 			classList.remove(CLASS_ACTIVE);
 			this.handle.style.webkitTransform = 'translate(0,0)';
@@ -6151,11 +6423,11 @@ var mui = (function(document, undefined) {
 	};
 	var setTranslate = function(element, x) {
 		if (element) {
-			element.style.webkitTransform = 'translate3d(' + x + 'px,0,0)';
+			element.style.webkitTransform = 'translate(' + x + 'px,0)';
 		}
 	};
 
-	window.addEventListener('touchstart', function(event) {
+	window.addEventListener($.EVENT_START, function(event) {
 		if (cell) {
 			toggleActive(false);
 		}
@@ -6209,7 +6481,7 @@ var mui = (function(document, undefined) {
 			}
 		}
 	});
-	window.addEventListener('touchmove', function(event) {
+	window.addEventListener($.EVENT_MOVE, function(event) {
 		toggleActive(false);
 	});
 
@@ -6466,14 +6738,14 @@ var mui = (function(document, undefined) {
 		}
 	};
 
-	window.addEventListener('touchend', function(event) { //使用touchend来取消高亮，避免一次点击既不触发tap，doubletap，longtap的事件
+	window.addEventListener($.EVENT_END, function(event) { //使用touchend来取消高亮，避免一次点击既不触发tap，doubletap，longtap的事件
 		if (!cell) {
 			return;
 		}
 		toggleActive(false);
 		sliderHandle && toggleEvents(cell, true);
 	});
-	window.addEventListener('touchcancel', function(event) { //使用touchcancel来取消高亮，避免一次点击既不触发tap，doubletap，longtap的事件
+	window.addEventListener($.EVENT_CANCEL, function(event) { //使用touchcancel来取消高亮，避免一次点击既不触发tap，doubletap，longtap的事件
 		if (!cell) {
 			return;
 		}
@@ -6580,7 +6852,7 @@ var mui = (function(document, undefined) {
 	 */
 	$.alert = function(message, title, btnValue, callback) {
 		if ($.os.plus) {
-			if (typeof message === undefined) {
+			if (typeof message === 'undefined') {
 				return;
 			} else {
 				if (typeof title === 'function') {
@@ -6609,7 +6881,7 @@ var mui = (function(document, undefined) {
 	 */
 	$.confirm = function(message, title, btnArray, callback) {
 		if ($.os.plus) {
-			if (typeof message === undefined) {
+			if (typeof message === 'undefined') {
 				return;
 			} else {
 				if (typeof title === 'function') {
@@ -6646,7 +6918,7 @@ var mui = (function(document, undefined) {
 	 */
 	$.prompt = function(text, defaultText, title, btnArray, callback) {
 		if ($.os.plus) {
-			if (typeof message === undefined) {
+			if (typeof message === 'undefined') {
 				return;
 			} else {
 
@@ -6687,6 +6959,7 @@ var mui = (function(document, undefined) {
 
 })(mui, window);
 (function($, window) {
+	var CLASS_ACTIVE = 'mui-active';
 	/**
 	 * 自动消失提示框
 	 */
@@ -6702,14 +6975,220 @@ var mui = (function(document, undefined) {
 			var toast = document.createElement('div');
 			toast.classList.add('mui-toast-container');
 			toast.innerHTML = '<div class="' + 'mui-toast-message' + '">' + message + '</div>';
+			toast.addEventListener('webkitTransitionEnd', function() {
+				if (!toast.classList.contains(CLASS_ACTIVE)) {
+					toast.parentNode.removeChild(toast);
+				}
+			});
 			document.body.appendChild(toast);
+			toast.offsetHeight;
+			toast.classList.add(CLASS_ACTIVE);
 			setTimeout(function() {
-				document.body.removeChild(toast);
+				toast.classList.remove(CLASS_ACTIVE);
 			}, 2000);
 		}
 	};
 
 })(mui, window);
+/**
+ * Popup(alert,confirm,prompt)  
+ * @param {Object} $
+ * @param {Object} window
+ * @param {Object} document
+ */
+(function($, window, document) {
+	var CLASS_POPUP = 'mui-popup';
+	var CLASS_POPUP_BACKDROP = 'mui-popup-backdrop';
+	var CLASS_POPUP_IN = 'mui-popup-in';
+	var CLASS_POPUP_OUT = 'mui-popup-out';
+	var CLASS_POPUP_INNER = 'mui-popup-inner';
+	var CLASS_POPUP_TITLE = 'mui-popup-title';
+	var CLASS_POPUP_TEXT = 'mui-popup-text';
+	var CLASS_POPUP_INPUT = 'mui-popup-input';
+	var CLASS_POPUP_BUTTONS = 'mui-popup-buttons';
+	var CLASS_POPUP_BUTTON = 'mui-popup-button';
+	var CLASS_POPUP_BUTTON_BOLD = 'mui-popup-button-bold';
+	var CLASS_POPUP_BACKDROP = 'mui-popup-backdrop';
+	var CLASS_ACTIVE = 'mui-active';
+
+	var popupStack = [];
+	var backdrop = (function() {
+		var element = document.createElement('div');
+		element.classList.add(CLASS_POPUP_BACKDROP);
+		element.addEventListener('webkitTransitionEnd', function() {
+			if (!this.classList.contains(CLASS_ACTIVE)) {
+				element.parentNode && element.parentNode.removeChild(element);
+			}
+		});
+		return element;
+	}());
+
+	var createInput = function(placeholder) {
+		return '<div class="' + CLASS_POPUP_INPUT + '"><input type="text" autofocus placeholder="' + (placeholder || '') + '"/></div>';
+	};
+	var createInner = function(message, title, extra) {
+		return '<div class="' + CLASS_POPUP_INNER + '"><div class="' + CLASS_POPUP_TITLE + '">' + title + '</div><div class="' + CLASS_POPUP_TEXT + '">' + message + '</div>' + (extra || '') + '</div>';
+	};
+	var createButtons = function(btnArray) {
+		var length = btnArray.length;
+		var btns = [];
+		for (var i = 0; i < length; i++) {
+			btns.push('<span class="' + CLASS_POPUP_BUTTON + (i === length - 1 ? (' ' + CLASS_POPUP_BUTTON_BOLD) : '') + '">' + btnArray[i] + '</span>');
+		}
+		return '<div class="' + CLASS_POPUP_BUTTONS + '">' + btns.join('') + '</div>';
+	};
+
+	var createPopup = function(html, callback) {
+		var popupElement = document.createElement('div');
+		popupElement.className = CLASS_POPUP;
+		popupElement.innerHTML = html;
+		var removePopupElement = function() {
+			popupElement.parentNode && popupElement.parentNode.removeChild(popupElement);
+			popupElement = null;
+		};
+
+		popupElement.addEventListener('webkitTransitionEnd', function(e) {
+			if (popupElement && e.target === popupElement && popupElement.classList.contains(CLASS_POPUP_OUT)) {
+				removePopupElement();
+			}
+		});
+		popupElement.style.display = 'block';
+		document.body.appendChild(popupElement);
+		popupElement.offsetHeight;
+		popupElement.classList.add(CLASS_POPUP_IN);
+
+		if (!backdrop.classList.contains(CLASS_ACTIVE)) {
+			backdrop.style.display = 'block';
+			document.body.appendChild(backdrop);
+			backdrop.offsetHeight;
+			backdrop.classList.add(CLASS_ACTIVE);
+		}
+		var btns = $.qsa('.' + CLASS_POPUP_BUTTON, popupElement);
+		var input = popupElement.querySelector('.' + CLASS_POPUP_INPUT + ' input');
+		var popup = {
+			element: popupElement,
+			close: function(index, animate) {
+				if (popupElement) {
+					callback && callback({
+						index: index || 0,
+						value: input && input.value || ''
+					});
+					if (animate !== false) {
+						popupElement.classList.remove(CLASS_POPUP_IN);
+						popupElement.classList.add(CLASS_POPUP_OUT);
+					} else {
+						removePopupElement();
+					}
+					popupStack.pop();
+					//如果还有其他popup，则不remove backdrop
+					if (popupStack.length) {
+						popupStack[popupStack.length - 1]['show'](animate);
+					} else {
+						backdrop.classList.remove(CLASS_ACTIVE);
+					}
+				}
+			}
+		};
+		var handleEvent = function(e) {
+			popup.close(btns.indexOf(e.target));
+		};
+		$(popupElement).on('tap', '.' + CLASS_POPUP_BUTTON, handleEvent);
+		if (popupStack.length) {
+			popupStack[popupStack.length - 1]['hide']();
+		}
+		popupStack.push({
+			close: popup.close,
+			show: function(animate) {
+				popupElement.style.display = 'block';
+				popupElement.offsetHeight;
+				popupElement.classList.add(CLASS_POPUP_IN);
+			},
+			hide: function() {
+				popupElement.style.display = 'none';
+				popupElement.classList.remove(CLASS_POPUP_IN);
+			}
+		});
+		return popup;
+	};
+	var createAlert = function(message, title, btnValue, callback, type) {
+		if (typeof message === 'undefined') {
+			return;
+		} else {
+			if (typeof title === 'function') {
+				callback = title;
+				title = null;
+				btnValue = null;
+			} else if (typeof btnValue === 'function') {
+				callback = btnValue;
+				btnValue = null;
+			}
+		}
+		if (!$.os.plus || type === 'div') {
+			return createPopup(createInner(message, title || '提示') + createButtons([btnValue || '确定']), callback);
+		}
+		return plus.nativeUI.alert(message, callback, title || '提示', btnValue || '确定');
+	};
+	var createConfirm = function(message, title, btnArray, callback, type) {
+		if (typeof message === 'undefined') {
+			return;
+		} else {
+			if (typeof title === 'function') {
+				callback = title;
+				title = null;
+				btnArray = null;
+			} else if (typeof btnArray === 'function') {
+				callback = btnArray;
+				btnArray = null;
+			}
+		}
+		if (!$.os.plus || type === 'div') {
+			return createPopup(createInner(message, title || '提示') + createButtons(btnArray || ['取消', '确认']), callback);
+		}
+		return plus.nativeUI.confirm(message, callback, title, btnArray || ['取消', '确认']);
+	};
+	var createPrompt = function(message, placeholder, title, btnArray, callback, type) {
+		if (typeof message === 'undefined') {
+			return;
+		} else {
+			if (typeof placeholder === 'function') {
+				callback = placeholder;
+				placeholder = null;
+				title = null;
+				btnArray = null;
+			} else if (typeof title === 'function') {
+				callback = title;
+				title = null;
+				btnArray = null;
+			} else if (typeof btnArray === 'function') {
+				callback = btnArray;
+				btnArray = null;
+			}
+		}
+		if (!$.os.plus || type === 'div') {
+			return createPopup(createInner(message, title || '提示', createInput(placeholder)) + createButtons(btnArray || ['取消', '确认']), callback);
+		}
+		return plus.nativeUI.prompt(message, callback, title || '提示', placeholder, btnArray || ['取消', '确认']);
+	};
+	var closePopup = function() {
+		if (popupStack.length) {
+			popupStack[popupStack.length - 1]['close']();
+			return true;
+		} else {
+			return false;
+		}
+	};
+	var closePopups = function() {
+		while (popupStack.length) {
+			popupStack[popupStack.length - 1]['close']();
+		}
+	};
+
+	$.closePopup = closePopup;
+	$.closePopups = closePopups;
+	$.alert = createAlert;
+	$.confirm = createConfirm;
+	$.prompt = createPrompt;
+})(mui, window, document);
 /**
  * Input(TODO resize)
  * @param {type} $
@@ -6722,6 +7201,7 @@ var mui = (function(document, undefined) {
 	var CLASS_ICON_CLEAR = 'mui-icon-clear';
 	var CLASS_ICON_SPEECH = 'mui-icon-speech';
 	var CLASS_ICON_SEARCH = 'mui-icon-search';
+	var CLASS_ICON_PASSWORD = 'mui-icon-eye';
 	var CLASS_INPUT_ROW = 'mui-input-row';
 	var CLASS_PLACEHOLDER = 'mui-placeholder';
 	var CLASS_TOOLTIP = 'mui-tooltip';
@@ -6729,6 +7209,7 @@ var mui = (function(document, undefined) {
 	var CLASS_FOCUSIN = 'mui-focusin';
 	var SELECTOR_ICON_CLOSE = '.' + CLASS_ICON_CLEAR;
 	var SELECTOR_ICON_SPEECH = '.' + CLASS_ICON_SPEECH;
+	var SELECTOR_ICON_PASSWORD = '.' + CLASS_ICON_PASSWORD;
 	var SELECTOR_PLACEHOLDER = '.' + CLASS_PLACEHOLDER;
 	var SELECTOR_TOOLTIP = '.' + CLASS_TOOLTIP;
 
@@ -6760,6 +7241,10 @@ var mui = (function(document, undefined) {
 			if (~this.options.actions.indexOf('search')) {
 				this.searchActionClass = CLASS_PLACEHOLDER;
 				this.searchActionSelector = SELECTOR_PLACEHOLDER;
+			}
+			if (~this.options.actions.indexOf('password')) {
+				this.passwordActionClass = CLASS_ICON + ' ' + CLASS_ICON_PASSWORD;
+				this.passwordActionSelector = SELECTOR_ICON_PASSWORD;
 			}
 		}
 		this.init();
@@ -6795,7 +7280,12 @@ var mui = (function(document, undefined) {
 					self.clearAction.addEventListener('tap', function(event) {
 						self.clearActionClick(event);
 					});
-
+				}
+				if (self.passwordActionClass) {
+					self.passwordAction = self.createAction(row, self.passwordActionClass, self.passwordActionSelector);
+					self.passwordAction.addEventListener('tap', function(event) {
+						self.passwordActionClick(event);
+					});
 				}
 			}
 		}
@@ -6843,7 +7333,7 @@ var mui = (function(document, undefined) {
 			};
 			element.addEventListener('input', showTip);
 			element.addEventListener('tap', showTip);
-			element.addEventListener('touchmove', function(e) {
+			element.addEventListener($.EVENT_MOVE, function(e) {
 				e.stopPropagation();
 			});
 		} else {
@@ -6883,6 +7373,15 @@ var mui = (function(document, undefined) {
 			this.element.setAttribute('placeholder', text);
 		}
 	};
+	Input.prototype.passwordActionClick = function(event) {
+		if (this.element.type === 'text') {
+			this.element.type = 'password';
+		} else {
+			this.element.type = 'text';
+		}
+		this.passwordAction.classList.toggle('mui-active');
+		event.preventDefault();
+	};
 	Input.prototype.clearActionClick = function(event) {
 		var self = this;
 		self.element.value = '';
@@ -6899,11 +7398,17 @@ var mui = (function(document, undefined) {
 			plus.speech.startRecognize({
 				engine: 'iFly'
 			}, function(s) {
-				self.element.value += s;
+				//替换全角符号
+				self.element.value += self.element.value ? '，' : '';
+				//console.log('___s___'+JSON.stringify(s));
+				s.length > 1 && s.pop();
+				self.element.value += s.join('，');
+				self.element.value = self.element.value.replace(/，，/g, '，');
 				$.focus(self.element);
 				plus.speech.stopRecognize();
 				$.trigger(self.element, 'recognized', {
-					value: self.element.value
+					value: self.element.value,
+					oldValue: oldValue
 				});
 				if (oldValue !== self.element.value) {
 					$.trigger(self.element, 'change');
@@ -6933,6 +7438,9 @@ var mui = (function(document, undefined) {
 				}
 				if (classList.contains('mui-input-speech')) {
 					actions.push('speech');
+				}
+				if (classList.contains('mui-input-password')) {
+					actions.push('password');
 				}
 				if (this.type === 'search' && row.classList.contains('mui-search')) {
 					actions.push('search');
@@ -6971,9 +7479,9 @@ var mui = (function(document, undefined) {
 	var tapEventName = touchSupport ? 'tap' : 'click';
 	var changeEventName = 'change';
 	var holderClassName = 'mui-numbox';
-	var plusClassName = 'mui-numbox-btn-plus';
-	var minusClassName = 'mui-numbox-btn-minus';
-	var inputClassName = 'mui-numbox-input';
+	var plusClassSelector = '.mui-btn-numbox-plus,.mui-numbox-btn-plus';
+	var minusClassSelector = '.mui-btn-numbox-minus,.mui-numbox-btn-minus';
+	var inputClassSelector = '.mui-input-numbox,.mui-numbox-input';
 
 	var Numbox = $.Numbox = $.Class.extend({
 		/**
@@ -6988,9 +7496,9 @@ var mui = (function(document, undefined) {
 			options = options || {};
 			options.step = parseInt(options.step || 1);
 			self.options = options;
-			self.input = $.qsa('.' + inputClassName, self.holder)[0];
-			self.plus = $.qsa('.' + plusClassName, self.holder)[0];
-			self.minus = $.qsa('.' + minusClassName, self.holder)[0];
+			self.input = $.qsa(inputClassSelector, self.holder)[0];
+			self.plus = $.qsa(plusClassSelector, self.holder)[0];
+			self.minus = $.qsa(minusClassSelector, self.holder)[0];
 			self.checkValue();
 			self.initEvent();
 		},
@@ -7011,7 +7519,19 @@ var mui = (function(document, undefined) {
 			});
 			self.input.addEventListener(changeEventName, function(event) {
 				self.checkValue();
+				var val = parseInt(self.input.value);
+				//触发顶层容器
+				$.trigger(self.holder, changeEventName, {
+					value: val
+				});
 			});
+		},
+		/**
+		 * 获取当前值
+		 **/
+		getValue: function() {
+			var self = this;
+			return parseInt(self.input.value);
 		},
 		/**
 		 * 验证当前值是法合法
@@ -7052,7 +7572,9 @@ var mui = (function(document, undefined) {
 		var instanceArray = [];
 		//遍历选择的元素
 		this.each(function(i, element) {
-			if (element.numbox) return;
+			if (element.numbox) {
+				return;
+			}
 			if (options) {
 				element.numbox = new Numbox(element, options);
 			} else {

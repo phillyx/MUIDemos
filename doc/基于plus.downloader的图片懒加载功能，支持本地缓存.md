@@ -21,7 +21,7 @@
 ```js
 var html = template('tmpl', data);
 document.querySelector("#pullrefresh").innerHTML += html;
-Lazyimg.pageno=data.pageno;
+lazyImg.pageno=data.pageno;
 lazyImg.lazyLoad();
 ```
 

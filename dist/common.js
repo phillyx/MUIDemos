@@ -151,11 +151,11 @@ var common =
 				};
 			}
 		};
-		com.androidMarket(pname) {
+		com.androidMarket = function(pname) {
 			plus.runtime.openURL("market://details?id=" + pname);
 		};
 
-		com.iosAppstore(url) {
+		com.iosAppstore = function (url) {
 			plus.runtime.openURL("itms-apps://" + url);
 		};
 		return com;
@@ -494,10 +494,10 @@ var common =
 	}
 
 	function lazyLoad(doc, cb) {
-		//console.log(Lazyimg.pageno);
+		//console.log(lazyImg.pageno);
 		var imgs;
-		if (Lazyimg.pageno) {
-			imgs = doc.querySelectorAll("img[data-pageno='" + Lazyimg.pageno + "']");
+		if (lazyImg.pageno) {
+			imgs = doc.querySelectorAll("img[data-pageno='" + lazyImg.pageno + "']");
 		} else {
 			imgs = doc.querySelectorAll('img.lazy');
 		}
