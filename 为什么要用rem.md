@@ -144,6 +144,7 @@ body {
 })(document, window);
 ```
 为了减少同学的工作量，就做了一个pexilToRem的对照表，如下
+
 |  px    |   rem  |
 | ------ | ------ |
 |  1px   |  0.04rem |
