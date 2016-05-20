@@ -23,7 +23,7 @@
   ![](http://images.cnblogs.com/cnblogs_com/phillyx/779277/o_20160516114604127.png)
 
 2.sass中文注释报错
-  - 打开`C:\Ruby22-x64\lib\ruby\gems\2.2.0\gems\sass-3.4.22\lib\sass`文件
+  - 打开`C:\Ruby22-x64\lib\ruby\gems\2.2.0\gems\sass-3.4.22\lib\sass\engine.rb`文件
   - 在文件下添加一行`Encoding.default_external = Encoding.find('utf-8')`
   
 3.'&: 伪元素'不要加空格，编译报错，`&:before` 一定不要加空格，一定注意不要加空格，一定注意编辑器格式化是有无加空格
