@@ -1,3 +1,15 @@
+/**
+ * @author phillyx 
+ * @email  1020450921.com
+ * @link   http://www.cnblogs.com/phillyx
+ * @github https://github.com/phillyx/
+ * @description 主要做了三点补充
+ * 				1.添加了预览图片文字说明，示例见imageviewer.html
+ * 				2.解决预览图片的缩放问题：
+ * 					如果图片过宽或过长，预加载图片时，会和当前显示的图片重叠
+ * 				3.解决预加载页面返回（mui.back）重新加载数据并打开时，预览无用的问题：
+ * 					添加原型方法 dispose 将当前对象释放及DOM清除
+ */
 (function($, window) {
 
 	var template = '<div id="{{id}}" class="mui-slider mui-preview-image mui-fullscreen"><div class="mui-preview-header">{{header}}</div><div class="mui-slider-group"></div><div class="mui-preview-footer mui-hidden">{{footer}}</div><div class="mui-preview-loading"><span class="mui-spinner mui-spinner-white"></span></div></div>';
@@ -36,6 +48,23 @@
 			this.element.querySelector($.classSelector('.preview-footer')).classList.remove($.className('hidden'));
 		}
 		this.addImages();
+		this.groupsLength=this.getGroupsLength();
+	};
+	/**
+	 *@description 获取当前预览分组长度
+	 */
+	proto.getGroupsLength = function() {
+		var imgs = document.querySelectorAll("img[data-preview-src][data-preview-group]");
+		var tmpGroup;
+		var len = 0;
+		$.each(imgs, function(index, item) {
+			var grp = item.getAttribute('data-preview-group');
+			if (!tmpGroup || tmpGroup != grp) {
+				tmpGroup = grp;
+				len += 1;
+			}
+		});
+		return len || 1;
 	};
 	proto.initEvent = function() {
 		var self = this;
@@ -153,7 +182,9 @@
 			var offset = $.offset(img);
 			itemData.sTop = offset.top;
 			itemData.sLeft = offset.left;
-			itemData.sScale = Math.max(itemData.sWidth / window.innerWidth, itemData.sHeight / window.innerHeight);
+			//缩放判断，解决预加载图片时，图片过大，和当前显示图片重叠的问题
+			var scale = Math.max(itemData.sWidth / window.innerWidth, itemData.sHeight / window.innerHeight);
+			itemData.sScale = scale > 1 ? 0.977 : scale;
 		}
 		imgEl.style.webkitTransform = 'translate3d(0,0,0) scale(' + itemData.sScale + ')';
 	};
@@ -304,13 +335,14 @@
 		var wHeight = window.innerHeight;
 		for (var i = 0; from < to; from++, i++) {
 			var itemData = groupArray[from];
+
 			var style = '';
 			if (itemData.sWidth) {
 				style = '-webkit-transform:translate3d(0,0,0) scale(' + itemData.sScale + ');transform:translate3d(0,0,0) scale(' + itemData.sScale + ')';
 			}
 			itemStr = itemTemplate.replace('{{src}}', itemData.src).replace('{{lazyload}}', itemData.lazyload).replace('{{style}}', style);
-			//TODO 1020450921@qq.com 2015-09-28
-			itemStr=itemStr.replace('{{content}}',itemData.el.getAttribute('data-content')||'');
+			//TODO
+			itemStr = itemStr.replace('{{content}}', itemData.el.getAttribute('data-content') || '');
 			if (from === index) {
 				currentIndex = i;
 				className = $.className('active');
@@ -372,15 +404,22 @@
 		}
 		var zoomers = this.element.querySelectorAll($.classSelector('.zoom-wrapper'));
 		for (var i = 0, len = zoomers.length; i < len; i++) {
-			$(zoomers[i]).zoom().destory();
+			$(zoomers[i]).zoom().destroy();
 		}
-		//		$(this.element).slider().destory();
+		this.groupsLength > 1 && $(this.element).slider().destroy();
 		//		this.empty();
 	};
 	proto.isShown = function() {
 		return this.element.classList.contains($.className('preview-in'));
 	};
-
+	/**
+	 * 释放当前对象
+	 */
+	proto.dispose = function() {
+		var prevdom = document.getElementById("__MUI_PREVIEWIMAGE");
+		prevdom && prevdom.parentNode.removeChild(prevdom);
+		previewImageApi = null;
+	};
 	var previewImageApi = null;
 	$.previewImage = function(options) {
 		if (!previewImageApi) {
