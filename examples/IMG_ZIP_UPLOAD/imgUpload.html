@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="js/mui.min.js"></script>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<script type="text/javascript" charset="utf-8">
+			mui.init();
+		</script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">图片上传</h1>
+			<button class="mui-btn mui-btn-link  mui-pull-right">
+				<span class="mui-icon mui-icon-camera"></span>
+			</button>
+		</header>
+		<div class="mui-content">
+			<h3>本示例插件<code>imageTool</code>将选择图片和拍照进行封装。</h3>
+			<br />
+			<h4>提供了四个对外接口</h4>
+			<ul>
+				<li>galleryImgs 从相册获取图片(上传),单选或多选,</li>
+				<li>camera 拍照(上传)</li>
+				<li>imgUpload 上传图片</li>
+				<li>zoomImage 压缩图片</li>
+			</ul>
+			<h3>1.图片上传添加上传数据</h3>
+			<p>为了保证代码的通用性，本插件为向上传任务中添加数据特意添加了接口</p>
+			<p>如果有需要，可以重写</p>
+			<pre>
+imageTool.setUploadData=function(task) {
+	task.addData("client", "HelloH5+");
+	task.addData("uid", com.getUid());
+}
+			</pre>
+			<h3>2.图片返回接口规范</h3>
+			<p>尤为要注意的是，同样为了保证代码的通用性，图片上传后返回的数据格式做了规范统一</p>
+			<p>upload.responseText的格式为：{code,url}</p>
+			<p>成功同样返回code=200</p>
+			<p>url为服务器图片地址</p>
+			<pre>
+function imgUploadCom(path, cb) {
+	var uploadUrl = itool.options.uploadUrl;
+	var task = plus.uploader.createUpload(uploadUrl, {
+		method: "POST",
+		timeout: 10
+	}, function(t, status) {
+		if (status == 200) {
+			console.log(JSON.stringify(t));
+			var data = JSON.parse(t.responseText);
+			//上传成功后后台返回的数据格式规范为{code:200,url:'网络链接'}
+			if (data.code == 200) {
+				imgurl = data.url;
+				cb && cb(false, imgurl);
+			} else {
+				cb && cb(data.message);
+			}
+		} else {
+			cb && cb('上传失败！');
+		}
+	});
+	task.addFile(path, {
+		key: 'phillyx_' + com.getUid()
+	});
+	itool.setUploadData(task);
+	task.start();
+}
+		</pre>
+			<h3>3.参数配置</h3>
+			<pre>
+.options= {
+	uploadUrl: '', //图片上传地址
+	multiple: false, //是否多图上传,默认单选
+	maxPicsCount: 8, //默认一次最多选择8张图片
+	isZoom: true, //默认通过native.js压缩
+	ZoomBox: 1200, //缩放宽高，默认1200px,横图缩放宽度，高度根据比例计算，同理竖图
+	ZoomQuality: 89, //压缩图片的质量
+	isUpload: false, //默认不上传
+	system: false, //设置为true时，如果系统自带相册选择控件时则优先使用，否则使用5+统一相册选择控件；设置为false则不使用系统自带相册选择控件，直接使用5+统一相册选择界面。
+};
+		</pre>
+			<h3>4.方法详细</h3>
+			<ul>
+				<li>
+					galleryImgs(cb) 具体使用参见示例
+					<p>		
+						<strong>参数：</strong><br />
+						cb:function(err,list)  --> list[{error,imgUrl}]
+					</p>
+				</li>
+				<li>
+					camera(cb)
+					<p>		
+						<strong>参数：</strong><br />
+						cb:function(err,list)  --> list[{error,imgUrl}]
+					</p>
+				</li>
+				<li>
+					imgUpload(path,cb)
+					<p>
+						<strong>参数：</strong><br /> path 图片上传路径,
+						<br /> cb:function(err,url){} url:图片服务器存放地址
+					</p>
+				</li>
+				<li>
+					zoomImage(path,cb)
+					<p>
+						<strong>参数：</strong><br /> path 压缩前的本地路径
+						<br /> cb:function(err,p)  p:压缩后的本地路径
+					</p>
+				</li>
+			</ul>
+		</div>
+		<script src="js/common.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/img-tool/image-new.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.plusReady(function() {
+				var o = imageTool.options;
+				o.uploadUrl = 'http://demo.dcloud.net.cn/helloh5/uploader/upload.php'; //图片上传链接
+				
+				o.multiple = true; //默认只上传一张图片 ，如果要选择多张，请设置为true
+				o.maxPicsCount = 6; //默认一次最多选择10张图片,
+				o.ZoomBox = 1200; //缩放宽高，默认1200px,横图缩放宽度，高度根据比例计算，同理竖图
+				o.ZoomQuality = 89; //压缩图片的质量
+				o.isUpload = true; //默认不上传
+				var mine = plus.webview.currentWebview();
+				var btn = document.querySelector("button.mui-btn-link");
+				btn.addEventListener('touchend', function() {
+					if (!imageTool.options.uploadUrl) {
+						mui.alert('请填写图片上传链接');
+						return;
+					}
+					// 弹出系统选择按钮框
+					plus.nativeUI.actionSheet({
+							cancel: "取消",
+							buttons: [{
+								title: "从手机相册选择"
+							}, {
+								title: '拍照'
+							}]
+						},
+						function(e) {
+							console.log(JSON.stringify(e));
+							if (e.index == 1) { //点击从相册选择
+								console.log("相册选择");
+								getPics();
+							} else if (e.index == 2) {
+								console.log("拍照");
+								getPics(true);
+							}
+						}
+					);
+				})
+			});
+
+			function getPics(isCamera) {
+				//				plus.nativeUI.showWaiting();
+				//可以设置mask
+				//main.setStyle({
+				//	mask: '#ccc'
+				//});
+				if (!isCamera) {
+					imageTool.galleryImgs(doPics);
+				} else {
+					imageTool.camera(doPics);
+				}
+			}
+
+			function doPics(err, list) {
+				//因为dcloud官方上传地址上传后返回的格式并不是插件定义的规范，
+				//"responseText":"{\"strings\":{\"uid\":\"39106184\",\"client\":\"HelloH5+\"},\"error\":\"0\",\"files\":{\"phillyx_72192431\":{\"name\":\"1464411747097.jpg\",\"url\":\"files\\/1464411747097.jpg\",\"type\":\"image\\/jpeg\",\"size\":245329}}}"
+				//所以list内部数据都为空
+				var err = '';
+				var files = [];
+				if (err) {
+					console.log(err);
+				}
+				if (list) {
+					mui.each(list, function(index, item) {
+						console.log("err " + item.error);
+						if (item.imgUrl) {
+							files.push(item.imgUrl);
+						}
+					});
+				}
+				console.log('上传图片地址：' + JSON.stringify(files));
+				//关掉mask
+				//main.setStyle({
+				//	mask: 'none'
+				//});
+				if (files.length > 0) {
+					//在这里做项目的逻辑，可以打开新页面将files传过去
+				}
+			};
+		</script>
+	</body>
+
+</html>
