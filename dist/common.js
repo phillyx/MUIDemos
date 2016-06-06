@@ -339,6 +339,10 @@ var common =
 	 *@description 存储当前下载路径
 	 */
 	var cache = {};
+	cache.options={
+		downloadPath:"_downloads/",
+		removePrefix:[]
+	};
 	cache.getFile = function(netPath, cb) {
 		var filePathCache = getLocalFileCache(netPath);
 		isExist(filePathCache, function(exist) {
@@ -386,7 +390,7 @@ var common =
 					//重置
 					couDwn = 0;
 					//返回默认图片
-					callback(plus.io.convertLocalFileSystemURL("_www/images/default.png"));
+					callback();
 				}
 			}
 		});
@@ -425,7 +429,7 @@ var common =
 		//			cb & cb(false);
 		//		});
 		waiting = waiting || plus.nativeUI.showWaiting('缓存清除中...');
-		plus.io.resolveLocalFileSystemURL("_downloads/", function(entry) {
+		plus.io.resolveLocalFileSystemURL(cache.options.downloadPath, function(entry) {
 			var tmpcou = 0;
 			var dirReader = entry.createReader();
 			dirReader.readEntries(function(entries) {
@@ -445,7 +449,8 @@ var common =
 						});
 					}
 				}, function() {
-					myStorage.removeItemByKeys(null, function() {
+					cache.options.removePrefix.concat(["filePathCache_","ajax_cache_"]);
+					myStorage.removeItemByKeys(cache.options.removePrefix, function() {
 						waiting.setTitle('已清除100%');
 						setTimeout(function() {
 							waiting.close();
@@ -465,7 +470,7 @@ var common =
 	 *@description 查看已下载的文件
 	 */
 	cache.getDownloadFiles = function() {
-		plus.io.resolveLocalFileSystemURL("_downloads/", function(entry) {
+		plus.io.resolveLocalFileSystemURL(cache.options.downloadPath, function(entry) {
 			console.log(entry.toLocalURL());
 			var rd = entry.createReader();
 			rd.readEntries(function(entries) {
