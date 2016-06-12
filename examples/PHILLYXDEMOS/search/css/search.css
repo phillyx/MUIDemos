@@ -1,0 +1,76 @@
+.contacts-search .mui-content .search-input {
+	overflow: hidden;
+	position: fixed;
+	width: 100%;
+	top: 44px;
+	z-index: 20;
+	background-color: #F0F0F0;
+	padding: 10px 0px 10px 0px;
+	margin-right: -60px;
+}
+.contacts-search .search-input .mui-input-row.mui-search {
+	width: 95%;
+	width: calc(100% - 20px);
+	width: -webkit-calc(100% - 20px);
+	margin-left: 10px;
+	float: left;
+	-webkit-transition: width .3s ease;
+	transition: width .3s ease;
+}
+
+.contacts-search .search-input.active .mui-input-row.mui-search{
+	width: 90%;
+	width: calc(100% - 64px);
+	width: -webkit-calc(100% - 64px);
+}
+.contacts-search .search-input.active button{
+	margin-right: 0;
+}
+.mui-search input[type=search] {
+	padding-left: 30px;
+	margin-bottom: 0;
+}
+
+.contacts-search .search-input button {
+	float: right;
+	color: #54cdaa;
+	font-weight: 300;
+	margin-right: -60px;
+	-webkit-transition: margin-right .3s ease;
+	transition: margin-right .3s ease;
+}
+
+.mui-search:before {
+	margin-top: -9px;
+}
+
+.search-body {
+	padding-bottom: 40px;
+	margin-top: 54px;
+}
+
+.search-body .tag-container {
+	background-color: white;
+	margin-bottom: 10px;
+}
+
+.search-body .tag-container .tag {
+	padding: 10px 10px 8px;
+	color: #646464;
+}
+
+.search-body .tag-container .mui-table-view:before,
+.mui-table-view:after {
+	height: 1px;
+	background-color: #c8c7cc;
+}
+
+.search-body .tag-container .more {
+	text-align: center;
+	line-height: 32px;
+	margin: 0;
+}
+
+.search-body .tag-container .nameClass span {
+	color: #FF665E;
+}

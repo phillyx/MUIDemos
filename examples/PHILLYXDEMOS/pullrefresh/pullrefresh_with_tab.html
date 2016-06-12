@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<title>pullrefresh_with_tab</title>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="css/pull.css"/>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">pullrefresh_with_tab</h1>
+		</header>
+		<div class="mui-content">
+
+			<div id="slider" class="mui-slider mui-fullscreen" style="display: none;">
+
+				<div id="sliderSegmentedControl" class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+
+					<div class="mui-scroll">
+						<!--<a class="mui-control-item mui-active" href="#item1mobile">
+							推荐
+						</a>-->
+					</div>
+					<!--<div id="process_bar"></div>-->
+				</div>
+				<div class="mui-slider-group">
+					<!--<div id="item1mobile" class="mui-slider-item mui-control-content mui-active">
+						<div id="scroll1" class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+								<ul class="mui-table-view">
+
+								</ul>
+							</div>
+						</div>
+					</div>-->
+				</div>
+			</div>
+
+		</div>
+		<script src="../js/mui.min.old.js"></script>
+		<script src="js/mui.pullToRefresh.js"></script>
+		<script src="js/mui.pullToRefresh.material.js"></script>
+		<script src="../js/artTemplate.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/html" id="tmpl_scroll">
+			{{each items as item i}}
+			<a class="mui-control-item {{if i==0}}mui-active{{/if}}" data-value="{{item.value}}" href="#item{{i}}mobile">
+				{{item.text}}
+			</a> {{/each}}
+		</script>
+		<script type="text/html" id="tmpl_slider">
+			{{each items as item i}}
+			<div id="item{{i}}mobile" class="mui-slider-item mui-control-content {{if i==0}}mui-active{{/if}}">
+				<div id="scroll{{i}}" class="mui-scroll-wrapper">
+					<div class="mui-scroll">
+						<ul class="mui-table-view">
+
+						</ul>
+					</div>
+				</div>
+			</div>
+			{{/each}}
+		</script>
+		<script src="js/pull.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+		</script>
+	</body>
+
+</html>

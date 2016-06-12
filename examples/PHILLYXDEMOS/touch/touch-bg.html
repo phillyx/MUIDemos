@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<title></title>
+		<title>模拟安卓按钮单击背景以圆形展开的动画效果</title>
 		<script src="../js/mui.min.js"></script>
 		<link href="../css/mui.min.css" rel="stylesheet" />
 		<script type="text/javascript" charset="UTF-8">
@@ -33,6 +33,10 @@
 				overflow: hidden;
 			}
 			
+			button:active {
+				background: #FFFFFF !important;
+			}
+			
 			.touch-bg-active {
 				transition: all 2s;
 				-webkit-transition: all 2s;
@@ -45,6 +49,9 @@
 	</head>
 
 	<body>
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title">模拟安卓按钮单击背景以圆形展开的动画效果</h1>
+		</header>
 		<div class="mui-content">
 			<div class="mui-card">
 				<ul class="mui-table-view">
@@ -72,140 +79,83 @@
 			</button>
 		</div>
 		<script type="text/javascript">
-			var startX, startY,
-				btn = document.querySelector("button");
-			var isend, tick, no;
-			btn.addEventListener('touchstart', function(e) {
-				e.preventDefault(); //阻止触摸时浏览器的缩放、滚动条滚动等
-				var touch_bg = document.createElement('div');
-				touch_bg.className = 'touch-bg-js';
-				this.style.overflow = 'hidden';
-				this.appendChild(touch_bg);
-				var touch = e.touches[0]; //获取第一个触点
-				var x = touch.pageX; //页面触点X坐标
-				var y = touch.pageY; //页面触点Y坐标
-				//记录触点初始位置
-				startX = x;
-				startY = y;
-				touch_bg.style.top = (y - this.offsetTop) + 'px';
-				touch_bg.style.left = x + 'px';
-				isend = false;
-				tick = new Date().getTime();
-				var _this = this;
-				var isOut = false;
-				var touch_bg_scale, innerInterval;
-				if (touch_bg_scale) {
-					clearInterval(touch_bg_scale);
-					innerInterval && clearInterval(innerInterval);
-					no = 0;
-					_this.removeChild(touch_bg);
-				}
-				setTimeout(function() {
-					touch_bg_scale = setInterval(function() {
-						no++;
-						if (isend) {
-							console.log(tick);
-							if (tick < 800) { //有瑕疵
-								console.log("over");
-								if (!isOut) {
-									isOut = true;
-									clearInterval(touch_bg_scale);
-									touch_bg.style.transition = 'all .025s';
-									touch_bg.style.webkitTransition = 'all .025s';
-									var isInner = false;
-									innerInterval = setInterval(function() {
-										no++;
-										touch_bg.style.width = touch_bg.style.height = 10 * 1.67 * 2 * no + "px";
-										touch_bg.style.marginLeft = touch_bg.style.marginTop = -5 * 1.67 * 2 * no + "px";
-										if (!isInner) {
-											isInner = true;
-											setTimeout(function() {
-												_this.removeChild(touch_bg);
-												clearInterval(innerInterval);
-												no = 0;
-												console.log("end");
-												isOut = false;
-											}, (800 - tick) / 2);
-										}
-									}, 25);
-								}
-							} else {
-								clearInterval(touch_bg_scale);
-								no = 0;
-								_this.removeChild(touch_bg);
-							}
-						}
-						touch_bg.style.width = touch_bg.style.height = 10 * 1.67 * 2 * no + "px";
-						touch_bg.style.marginLeft = touch_bg.style.marginTop = -5 * 1.67 * 2 * no + "px";
-					}, 50); //1000为1秒钟
-				}, 10)
-			});
-			document.querySelector("button").addEventListener('touchstart', function() {
-				//				console.log('touchmove' + new Date().toISOString());
-			});
-			document.querySelector("button").addEventListener('touchend', function() {
-				//				console.log('touchend' + new Date().toISOString());
-				isend = true;
-				tick = new Date().getTime() - tick;
-			});
-			(function(win) {
-				var sty = document.createElement('style');
-				sty.innerText = ".touch-bg,{position: absolute;width: 2px;height: 2px;margin: 0;border-radius: 50%;background-color: #C0C0C0;opacity: 0.3;display: none;}.touch-bg-active {transition: all 2s;-webkit-transition: all 2s;width: 120vw;height: 120vw;margin-left: -60vw;margin-top: -60vw;}";
-				document.head.appendChild(sty);
-				sty = null;
+			var touch_bg_phillyx = (function(win) {
+				//var sty = document.createElement('style');
+				//sty.innerText = ".touch-bg,{position: absolute;width: 2px;height: 2px;margin: 0;border-radius: 50%;background-color: #C0C0C0;opacity: 0.3;display: none;}.touch-bg-active {transition: all 2s;-webkit-transition: all 2s;width: 120vw;height: 120vw;margin-left: -60vw;margin-top: -60vw;}";
+				//document.head.appendChild(sty);
 				var tick, startX, startY;
 
 				function touchStart(e) {
+					var touch = e.touches[0]; //获取第一个触点
+					//记录触点初始位置
+					var x = startX = touch.pageX; //页面触点X坐标
+					var y = startY = touch.pageY; //页面触点Y坐标
 					var _this = this;
-					e.preventDefault(); //阻止触摸时浏览器的缩放、滚动条滚动等
-					if (_this.style.position == "static") {
-						_this.style.position = 'relative';
-					}
+					_this.style.position = 'relative';
 					_this.style.overflow = 'hidden';
 					var touch_bg = document.createElement('div');
 					touch_bg.className = 'touch-bg';
-					_this.appendChild(touch_bg);
-					var touch = e.touches[0]; //获取第一个触点
-					var x = touch.pageX; //页面触点X坐标
-					var y = touch.pageY; //页面触点Y坐标
-					//记录触点初始位置
-					startX = x;
-					startY = y;
 					touch_bg.style.top = Math.abs(this.offsetTop - y) + 'px';
 					touch_bg.style.left = Math.abs(this.offsetLeft - x) + 'px';
 					touch_bg.style.display = 'block';
-					tick = new Date().getTime();
+					_this.appendChild(touch_bg);
+					tick = +new Date();
 					setTimeout(function() {
 						touch_bg.classList.add('touch-bg-active');
-						/*默认值
-						 * 盒子宽度一半+触点相对位移+5px的边角拓展
-						 **/
-						var radius = _this.offsetWidth / 2 + Math.abs(_this.offsetWidth / 2 - x) + 5;
-						//最小值
-						radius = radius < 200 ? 200 : radius;
-						touch_bg.style.width = touch_bg.style.height = radius * 2 + "px";
-						touch_bg.style.marginLeft = touch_bg.style.marginTop = -radius + "px";
-					}, 10);
-					console.log(this.innerHTML);
+						var radius = getRadius.call(_this);
+						setStyle.call(touch_bg, radius);
+					});
 				};
+
+				function getRadius() {
+					/* 默认值
+					 * 盒子宽度一半+触点相对位移+5px的边角拓展
+					 **/
+					var half = this.offsetWidth / 2;
+					var radius = half + Math.abs(half - startX) + 5;
+					if (radius < half) {
+						//最小值
+						radius = half;
+					}
+					return radius;
+				}
+
+				function setStyle(r) {
+					this.style.width = this.style.height = r * 2 + "px";
+					this.style.marginLeft = this.style.marginTop = -r + "px";
+				}
 
 				function touchEnd(e) {
 					var _this = this;
 					var touch_bg = this.querySelector('.touch-bg');
-					tick = new Date().getTime() - tick;
-					if (touch_bg.offsetHeight < document.body.offsetWidth && tick < 300) {
-						touch_bg.style.transition = 'all 1s';
-						touch_bg.style.webkitTransition = 'all 1s';
-						touch_bg.style.width = touch_bg.style.height = _this.offsetWidth * 2 + "px";
-						touch_bg.style.marginLeft = touch_bg.style.marginTop = -_this.offsetWidth + "px";
+					tick = +new Date() - tick;
+					var w = _this.offsetWidth;
+					console.log("w",w);
+					var radius = getRadius.call(_this);
+					if (radius * 2 - w > 0) {
+						var t = 100 - w / (2 * radius) * 100;
+						console.log("t", t);
+						if (t < 30) {
+							t = 600;
+						} else if (t < 50) {
+							t = 400;
+						} else {
+							t = t * 4;
+						}
+						console.log("t-new",t);
+						touch_bg.style.transitionDuration = t + 'ms';
+						touch_bg.style.webkitAnimationDuration = t + 'ms';
+						touch_bg.style.width = touch_bg.style.height = radius * 2.02 + "px";
+						touch_bg.style.marginLeft = touch_bg.style.marginTop = -radius*1.01 + "px";
+						console.log("",touch_bg);
 						setTimeout(function() {
 							_this.removeChild(touch_bg);
-						}, 500)
+						}, t)
 					} else {
 						_this.removeChild(touch_bg);
 					}
 				};
-				win.touch_bg_phillyx = {
+				return {
 					init: function(obj) {
 						obj.addEventListener('touchstart', touchStart)
 						obj.addEventListener('touchend', touchEnd);
