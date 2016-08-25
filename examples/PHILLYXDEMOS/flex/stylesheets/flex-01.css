@@ -1,0 +1,28 @@
+/* line 1, ../scss/flex-01.scss */
+.sn-header {
+  background: #4b5dcb;
+  border: 0;
+}
+
+/* line 5, ../scss/flex-01.scss */
+.sn-header-back {
+  display: block;
+  margin-left: 0.4rem;
+}
+/* line 8, ../scss/flex-01.scss */
+.sn-header-back img {
+  width: 0.8rem;
+  height: 0.8rem;
+}
+
+/* line 13, ../scss/flex-01.scss */
+.sn-header-title {
+  margin-right: 1.2rem;
+  text-align: center;
+}
+/* line 16, ../scss/flex-01.scss */
+.sn-header-title h1 {
+  color: #FFF;
+  font-size: 0.7rem;
+  font-weight: bold;
+}

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>header-nav</title>
+		<link rel="stylesheet" type="text/css" href="stylesheets/main.css"/>
+		<link rel="stylesheet" type="text/css" href="http://res.mpre.cnsuning.com/common/style/base/2.0/base.css"/>
+		<link rel="stylesheet" type="text/css" href="stylesheets/flex-01.css"/>
+	</head>
+	<body>
+		<header class="sn-nav sn-header clr">
+			<div class="sn-flex header-ctn">
+				<div class="item fixed">
+					<a href="javascript:void(0)" class="sn-header-back">
+						<img src="img/back.png" />
+					</a>
+				</div>
+				<div class="item sn-header-title">
+					<h1>title-1</h1>
+				</div>
+			</div>
+		</header>
+		<br />
+		<p>左右绝对定位，中间title填充</p>
+		<header class="sn-nav sn-header clr">
+			<div class="sn-flex header-ctn">
+				<div class="absolute">
+					<a href="javascript:void(0)" class="sn-header-back">
+						<img src="img/back.png" />
+					</a>
+				</div>
+				<div class="item sn-header-title mr0">
+					<h1>title-2</h1>
+				</div>
+				<div class="absolute" style="right: .4rem;">
+					<a>保存</a>
+				</div>
+			</div>
+		</header>
+		<br />
+		<p>左右定宽</p>
+		<header class="sn-nav sn-header clr">
+			<div class="sn-flex header-ctn">
+				<div class="item fixed" style="width: 1.2rem;">
+					<a href="javascript:void(0)" class="sn-header-back">
+						<img src="img/back.png" />
+					</a>
+				</div>
+				<div class="item sn-header-title mr0">
+					<h1>title-2</h1>
+				</div>
+				<div class="item fixed" style="width: 1.2rem;right: .4rem;">
+					<a>保存</a>
+				</div>
+			</div>
+		</header>
+		<br />
+		<!---->
+	</body>
+</html>

@@ -1,0 +1,80 @@
+@charset "UTF-8";
+/* line 1, ../scss/flex-02.scss */
+.wrapper {
+  font-weight: bold;
+  text-align: center;
+}
+
+/* 设置所有标签宽度为100% */
+/* line 6, ../scss/flex-02.scss */
+.header,
+.main,
+.nav,
+.aside,
+.footer {
+  padding: 0 10px;
+  flex: 1 100%;
+}
+
+/* line 15, ../scss/flex-02.scss */
+.header {
+  background: tomato;
+}
+
+/* line 19, ../scss/flex-02.scss */
+.footer {
+  background: lightgreen;
+}
+
+/* line 23, ../scss/flex-02.scss */
+.main {
+  text-align: left;
+  background: deepskyblue;
+}
+
+/* line 28, ../scss/flex-02.scss */
+.aside-1 {
+  background: gold;
+}
+
+/* line 32, ../scss/flex-02.scss */
+.aside-2 {
+  background: hotpink;
+}
+
+@media all and (min-width: 600px) {
+  /* line 37, ../scss/flex-02.scss */
+  .aside {
+    flex: 1 auto;
+  }
+}
+@media all and (min-width: 800px) {
+  /* line 41, ../scss/flex-02.scss */
+  .main {
+    flex: 3 0px;
+  }
+
+  /* line 42, ../scss/flex-02.scss */
+  .aside-1 {
+    order: 1;
+  }
+
+  /* line 43, ../scss/flex-02.scss */
+  .main {
+    order: 2;
+  }
+
+  /* line 44, ../scss/flex-02.scss */
+  .aside-2 {
+    order: 3;
+  }
+
+  /* line 45, ../scss/flex-02.scss */
+  .footer {
+    order: 4;
+  }
+}
+/* line 48, ../scss/flex-02.scss */
+body {
+  padding: 2em;
+}

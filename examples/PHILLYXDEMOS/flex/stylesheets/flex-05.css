@@ -1,0 +1,17 @@
+/* line 2, ../scss/flex-05.scss */
+ul.sn-flex li {
+  border: 1px solid #9D9D9D;
+  margin: .4rem;
+  margin-top: 0;
+  width: calc(50% - .6rem);
+  -webkit-flex-basis: -webkit-calc(50% - .6rem);
+  flex-basis: calc(50% - .6rem);
+}
+/* line 9, ../scss/flex-05.scss */
+ul.sn-flex li:nth-child(2n+1) {
+  margin-right: .2rem;
+}
+/* line 12, ../scss/flex-05.scss */
+ul.sn-flex li:nth-child(2n) {
+  margin-left: .2rem;
+}

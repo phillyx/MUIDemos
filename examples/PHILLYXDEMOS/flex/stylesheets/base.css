@@ -1,0 +1,39 @@
+/* line 1, ../scss/base.scss */
+.sn-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9998;
+}
+/* line 7, ../scss/base.scss */
+.sn-header.clr {
+  position: static;
+}
+
+/* line 11, ../scss/base.scss */
+.sn-content {
+  margin: 0 auto;
+  max-width: 15rem;
+}
+
+/* line 15, ../scss/base.scss */
+.sn-nav.sn-header ~ .sn-content {
+  padding-top: 1.76rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* line 19, ../scss/base.scss */
+.p10 {
+  padding: 0 .4rem !important;
+}
+
+/* line 22, ../scss/base.scss */
+.absolute {
+  position: absolute;
+}
+
+/* line 25, ../scss/base.scss */
+.mr0 {
+  margin-right: 0 !important;
+}

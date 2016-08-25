@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>瀑布流布局？</title>
+		<link rel="stylesheet" type="text/css" href="stylesheets/main.css" />
+		<link rel="stylesheet" type="text/css" href="http://res.mpre.cnsuning.com/common/style/base/2.0/base.css" />
+		<link rel="stylesheet" type="text/css" href="stylesheets/flex-04.css" />
+	</head>
+
+	<body>
+		<!--高度给定，才能实现瀑布流布局，异步加载数据，ul高度需要跟随变化，整体布局也随之变掉了。整体的排序方式是先左侧，左侧无区域排放li，再右侧，体验很差，不推荐-->
+		<div class="sn-content">
+			<ul class="sn-flex column">
+				<li class="" style="height: 180px;">
+					<div class="ctn sn-flex center">1</div>
+				</li>
+				<li class="">
+					<div class="ctn sn-flex center">2</div>
+				</li>
+				<li class="">
+					<div class="ctn sn-flex center">3</div>
+				</li>
+				<li class=""  style="height: 160px;">
+					<div class="ctn sn-flex center">4</div>
+				</li>
+				<li class="">
+					<div class="ctn sn-flex center">5</div>
+				</li>
+				<li class=""  style="height: 140px;">
+					<div class="ctn sn-flex center" >6</div>
+				</li>
+				<li class="">
+					<div class="ctn sn-flex center">7</div>
+				</li>
+				<li class=""   style="height: 120px;">
+					<div class="ctn sn-flex center">8</div>
+				</li>
+				
+			</ul>
+		</div>
+
+	</body>
+
+</html>

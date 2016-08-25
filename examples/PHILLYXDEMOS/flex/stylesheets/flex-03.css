@@ -1,0 +1,266 @@
+@charset "UTF-8";
+/* line 2, ../scss/flex.scss */
+.sn-flex {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  /*flex-wrap: (默认)nowrap | wrap | wrap-reverse;*/
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+/* line 12, ../scss/flex.scss */
+.sn-flex,
+.sn-flex *,
+.sn-flex :after,
+.sn-flex :before {
+  box-sizing: border-box;
+}
+
+/* line 18, ../scss/flex.scss */
+.sn-flex {
+  /*垂直布局：主轴为垂直方向*/
+  /*水平布局：（默认）主轴为水平方向，起点在左端*/
+  /*水平布局：主轴为水平方向，起点在右端*/
+  /*item在主轴上的对齐方式*/
+  /*默认：左对齐*/
+  /*右对齐*/
+  /*居中对齐*/
+  /*两端对齐，项目之间的间隔都相等*/
+  /*每个项目两侧的间隔相等。所以，项目之间的间隔比项目与边框的间隔大一倍。*/
+  /*item在交叉轴上的对齐方式*/
+  /*y轴顶部对齐*/
+  /*y轴底部对齐*/
+  /*y轴居中对齐*/
+  /*默认：如果item未设置高度或设为auto，将占满整个容器的高度。*/
+  /*item的第一行文字的基线对齐。*/
+  /*居中对齐*/
+}
+/* line 20, ../scss/flex.scss */
+.sn-flex.vertical, .sn-flex.column {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  /*主轴为垂直方向，起点在下沿*/
+}
+/* line 28, ../scss/flex.scss */
+.sn-flex.vertical.reverse, .sn-flex.column.reverse {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: reverse;
+  -webkit-flex-direction: column-reverse;
+  -ms-flex-direction: column-reverse;
+  flex-direction: column-reverse;
+}
+/* line 35, ../scss/flex.scss */
+.sn-flex.vertical .item, .sn-flex.column .item {
+  width: auto;
+}
+/* line 39, ../scss/flex.scss */
+.sn-flex.vertical > .item > .inner, .sn-flex.column > .item > .inner {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+/* line 47, ../scss/flex.scss */
+.sn-flex.horizental, .sn-flex.row {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+}
+/* line 56, ../scss/flex.scss */
+.sn-flex.reverse {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: reverse;
+  -webkit-flex-direction: row-reverse;
+  -ms-flex-direction: row-reverse;
+  flex-direction: row-reverse;
+}
+/* line 65, ../scss/flex.scss */
+.sn-flex.justify-start, .sn-flex.h-left {
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+}
+/* line 73, ../scss/flex.scss */
+.sn-flex.justify-end, .sn-flex.h-right, .navigation {
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+}
+/* line 81, ../scss/flex.scss */
+.sn-flex.justify-center, .sn-flex.h-center {
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+/* line 89, ../scss/flex.scss */
+.sn-flex.justify-between, .sn-flex.h-between {
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+/* line 97, ../scss/flex.scss */
+.sn-flex.justify-around, .sn-flex.h-around {
+  -webkit-justify-content: space-around;
+  -ms-flex-pack: distribute;
+  justify-content: space-around;
+}
+/* line 105, ../scss/flex.scss */
+.sn-flex.align-start, .sn-flex.v-top {
+  -webkit-box-align: start;
+  -webkit-align-items: flex-start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+}
+/* line 113, ../scss/flex.scss */
+.sn-flex.align-end, .sn-flex.v-bottom {
+  -webkit-box-align: end;
+  -webkit-align-items: flex-end;
+  -ms-flex-align: end;
+  align-items: flex-end;
+}
+/* line 121, ../scss/flex.scss */
+.sn-flex.align-center, .sn-flex.v-center {
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+/* line 129, ../scss/flex.scss */
+.sn-flex.align-stretch {
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+  -ms-flex-align: stretch;
+  align-items: stretch;
+}
+/* line 134, ../scss/flex.scss */
+.sn-flex.align-stretch .item {
+  height: auto;
+}
+/* line 139, ../scss/flex.scss */
+.sn-flex.baseline {
+  -webkit-box-align: baseline;
+  -webkit-align-items: baseline;
+  -ms-flex-align: baseline;
+  align-items: baseline;
+}
+/* line 146, ../scss/flex.scss */
+.sn-flex.center {
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+/* line 156, ../scss/flex.scss */
+.sn-flex > .item {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  width: 0;
+  -webkit-flex-basis: 0;
+  -ms-flex-preferred-size: 0;
+  flex-basis: 0;
+  max-width: 100%;
+  display: block;
+  padding: 0;
+  position: relative;
+}
+/* line 169, ../scss/flex.scss */
+.sn-flex > .item.fixed {
+  -webkit-box-flex: 0;
+  -webkit-flex: none;
+  -ms-flex: none;
+  flex: none;
+  width: auto;
+}
+/* line 176, ../scss/flex.scss */
+.sn-flex > .item.align-start, .sn-flex > .item.v-top {
+  -webkit-align-self: flex-start;
+  -ms-flex-item-align: start;
+  align-self: flex-start;
+}
+/* line 182, ../scss/flex.scss */
+.sn-flex > .item.align-end, .sn-flex > .item.v-bottom {
+  -webkit-align-self: flex-end;
+  -ms-flex-item-align: end;
+  align-self: flex-end;
+}
+/* line 188, ../scss/flex.scss */
+.sn-flex > .item.align-center, .sn-flex > .item.v-center {
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  align-self: center;
+}
+/* line 194, ../scss/flex.scss */
+.sn-flex > .item.align-stretch {
+  -webkit-box-align: stretch;
+  -webkit-align-items: stretch;
+  -ms-flex-align: stretch;
+  align-items: stretch;
+  height: auto;
+}
+
+/* line 2, ../scss/flex-03.scss */
+.navigation {
+  list-style: none;
+  margin: 0;
+  background: deepskyblue;
+}
+
+/* line 8, ../scss/flex-03.scss */
+.navigation a {
+  text-decoration: none;
+  display: block;
+  padding: 1em;
+  color: white;
+}
+
+/* line 14, ../scss/flex-03.scss */
+.navigation a:hover {
+  background: #00b7f5;
+}
+
+@media all and (max-width: 800px) {
+  /* line 18, ../scss/flex-03.scss */
+  .navigation {
+    -webkit-justify-content: space-around;
+    -ms-flex-pack: distribute;
+    justify-content: space-around;
+  }
+}
+@media all and (max-width: 600px) {
+  /* line 27, ../scss/flex-03.scss */
+  .navigation {
+    -webkit-flex-flow: column wrap;
+    flex-flow: column wrap;
+    padding: 0;
+  }
+
+  /* line 32, ../scss/flex-03.scss */
+  .navigation a {
+    text-align: center;
+    padding: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  /* line 38, ../scss/flex-03.scss */
+  .navigation li:last-of-type a {
+    border-bottom: none;
+  }
+}

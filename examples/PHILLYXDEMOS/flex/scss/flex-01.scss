@@ -1,0 +1,21 @@
+.sn-header {
+    background: #4b5dcb;
+    border: 0;
+}
+.sn-header-back {
+    display: block;
+    margin-left: 0.4rem;
+    img {
+        width: 0.8rem;
+        height: 0.8rem;
+    }
+}
+.sn-header-title {
+    margin-right: 1.2rem;
+    text-align: center;
+    h1 {
+        color: #FFF;
+        font-size: 0.7rem;
+        font-weight: bold;
+    }
+}

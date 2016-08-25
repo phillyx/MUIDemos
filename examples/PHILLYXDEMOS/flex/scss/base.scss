@@ -1,0 +1,27 @@
+.sn-header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9998;
+    &.clr{
+        position: static;
+    }
+}
+.sn-content{
+    margin: 0 auto;
+    max-width: 15rem;
+}
+.sn-nav.sn-header~.sn-content{
+    padding-top: 1.76rem;
+    -webkit-overflow-scrolling: touch;
+}
+.p10{
+    padding: 0 .4rem !important;
+}
+.absolute{
+    position: absolute;
+}
+.mr0{
+    margin-right: 0 !important;
+}

@@ -1,0 +1,202 @@
+$namespace: 'sn-';
+.#{$namespace}flex {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    /*flex-wrap: (默认)nowrap | wrap | wrap-reverse;*/
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+.#{$namespace}flex,
+.#{$namespace}flex *,
+.#{$namespace}flex :after,
+.#{$namespace}flex :before {
+    box-sizing: border-box;
+}
+.#{$namespace}flex {
+    /*垂直布局：主轴为垂直方向*/
+    &.vertical,
+    &.column {
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -webkit-flex-direction: column;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        /*主轴为垂直方向，起点在下沿*/
+        &.reverse {
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: reverse;
+            -webkit-flex-direction: column-reverse;
+            -ms-flex-direction: column-reverse;
+            flex-direction: column-reverse;
+        }
+        .item {
+            width: auto;
+        }
+        &>.item {
+            &>.inner {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+    /*水平布局：（默认）主轴为水平方向，起点在左端*/
+    &.horizental,
+    &.row {
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: normal;
+        -webkit-flex-direction: row;
+        -ms-flex-direction: row;
+        flex-direction: row;
+    }
+    /*水平布局：主轴为水平方向，起点在右端*/
+    &.reverse {
+        -webkit-box-orient: horizontal;
+        -webkit-box-direction: reverse;
+        -webkit-flex-direction: row-reverse;
+        -ms-flex-direction: row-reverse;
+        flex-direction: row-reverse;
+    }
+    /*item在主轴上的对齐方式*/
+    /*默认：左对齐*/
+    &.justify-start,
+    &.h-left {
+        -webkit-box-pack: start;
+        -webkit-justify-content: flex-start;
+        -ms-flex-pack: start;
+        justify-content: flex-start;
+    }
+    /*右对齐*/
+    &.justify-end,
+    &.h-right {
+        -webkit-box-pack: end;
+        -webkit-justify-content: flex-end;
+        -ms-flex-pack: end;
+        justify-content: flex-end;
+    }
+    /*居中对齐*/
+    &.justify-center,
+    &.h-center {
+        -webkit-box-pack: center;
+        -webkit-justify-content: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+    }
+    /*两端对齐，项目之间的间隔都相等*/
+    &.justify-between,
+    &.h-between {
+        -webkit-box-pack: justify;
+        -webkit-justify-content: space-between;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+    }
+    /*每个项目两侧的间隔相等。所以，项目之间的间隔比项目与边框的间隔大一倍。*/
+    &.justify-around,
+    &.h-around {
+        -webkit-justify-content: space-around;
+        -ms-flex-pack: distribute;
+        justify-content: space-around;
+    }
+    /*item在交叉轴上的对齐方式*/
+    /*y轴顶部对齐*/
+    &.align-start,
+    &.v-top {
+        -webkit-box-align: start;
+        -webkit-align-items: flex-start;
+        -ms-flex-align: start;
+        align-items: flex-start;
+    }
+    /*y轴底部对齐*/
+    &.align-end,
+    &.v-bottom {
+        -webkit-box-align: end;
+        -webkit-align-items: flex-end;
+        -ms-flex-align: end;
+        align-items: flex-end;
+    }
+    /*y轴居中对齐*/
+    &.align-center,
+    &.v-center {
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+    /*默认：如果item未设置高度或设为auto，将占满整个容器的高度。*/
+    &.align-stretch {
+        -webkit-box-align: stretch;
+        -webkit-align-items: stretch;
+        -ms-flex-align: stretch;
+        align-items: stretch;
+        .item {
+            height: auto;
+        }
+    }
+    /*item的第一行文字的基线对齐。*/
+    &.baseline {
+        -webkit-box-align: baseline;
+        -webkit-align-items: baseline;
+        -ms-flex-align: baseline;
+        align-items: baseline;
+    }
+    /*居中对齐*/
+    &.center {
+        -webkit-box-pack: center;
+        -webkit-justify-content: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+    &>.item {
+        -webkit-box-flex: 1;
+        -webkit-flex: 1;
+        -ms-flex: 1;
+        flex: 1;
+        width: 0;
+        -webkit-flex-basis: 0;
+        -ms-flex-preferred-size: 0;
+        flex-basis: 0;
+        max-width: 100%;
+        display: block;
+        padding: 0;
+        position: relative;
+        &.fixed {
+            -webkit-box-flex: 0;
+            -webkit-flex: none;
+            -ms-flex: none;
+            flex: none;
+            width: auto;
+        }
+        &.align-start,
+        &.v-top {
+            -webkit-align-self: flex-start;
+            -ms-flex-item-align: start;
+            align-self: flex-start;
+        }
+        &.align-end,
+        &.v-bottom {
+            -webkit-align-self: flex-end;
+            -ms-flex-item-align: end;
+            align-self: flex-end;
+        }
+        &.align-center,
+        &.v-center {
+            -webkit-align-self: center;
+            -ms-flex-item-align: center;
+            align-self: center;
+        }
+        &.align-stretch {
+            -webkit-box-align: stretch;
+            -webkit-align-items: stretch;
+            -ms-flex-align: stretch;
+            align-items: stretch;
+            height: auto;
+        }
+    }
+}

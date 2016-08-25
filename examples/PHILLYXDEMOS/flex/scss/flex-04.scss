@@ -1,0 +1,33 @@
+.sn-content{
+    .sn-flex{
+        &.column{
+              min-height: 100vh;
+              //要给定高，才能实现瀑布流布局
+              height: 800px;
+        }
+        .item{
+            flex-basis: 50%;
+            height: 200px;
+
+        }
+                    .ctn{
+                height: 100%;
+            }
+    }
+    li{
+        height: 200px;
+        width: 50%;
+    }
+    li:nth-child(2n){
+        background: lightcoral;
+    }
+    li:nth-child(3n){
+        background: lightgreen;
+    }
+    li:nth-child(3n+1){
+        background: lightgray;
+    }
+    li:nth-child(4n){
+        background: lightpink;
+    }
+}

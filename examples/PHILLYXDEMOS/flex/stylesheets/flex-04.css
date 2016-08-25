@@ -1,0 +1,35 @@
+/* line 3, ../scss/flex-04.scss */
+.sn-content .sn-flex.column {
+  min-height: 100vh;
+  height: 800px;
+}
+/* line 8, ../scss/flex-04.scss */
+.sn-content .sn-flex .item {
+  flex-basis: 50%;
+  height: 200px;
+}
+/* line 13, ../scss/flex-04.scss */
+.sn-content .sn-flex .ctn {
+  height: 100%;
+}
+/* line 17, ../scss/flex-04.scss */
+.sn-content li {
+  height: 200px;
+  width: 50%;
+}
+/* line 21, ../scss/flex-04.scss */
+.sn-content li:nth-child(2n) {
+  background: lightcoral;
+}
+/* line 24, ../scss/flex-04.scss */
+.sn-content li:nth-child(3n) {
+  background: lightgreen;
+}
+/* line 27, ../scss/flex-04.scss */
+.sn-content li:nth-child(3n+1) {
+  background: lightgray;
+}
+/* line 30, ../scss/flex-04.scss */
+.sn-content li:nth-child(4n) {
+  background: lightpink;
+}
