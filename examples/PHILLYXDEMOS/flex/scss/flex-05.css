@@ -1,0 +1,12 @@
+section {
+  padding: 0.2rem 0 0.8rem;
+  width: 15rem;
+  margin: 0 auto; }
+  section aside ul li {
+    height: 120px;
+    background: #FFF;
+    margin: 0.2rem 0.1rem 0 0; }
+  section aside.aside-2 ul li {
+    margin: 0.2rem 0 0 0.1rem; }
+
+/*# sourceMappingURL=flex-05.css.map */

@@ -1,17 +1,16 @@
-/* line 2, ../scss/flex-05.scss */
-ul.sn-flex li {
-  border: 1px solid #9D9D9D;
-  margin: .4rem;
-  margin-top: 0;
-  width: calc(50% - .6rem);
-  -webkit-flex-basis: -webkit-calc(50% - .6rem);
-  flex-basis: calc(50% - .6rem);
+/* line 1, ../scss/flex-05.scss */
+section {
+  padding: 0.2rem 0 0.8rem;
+  width: 15rem;
+  margin: 0 auto;
 }
-/* line 9, ../scss/flex-05.scss */
-ul.sn-flex li:nth-child(2n+1) {
-  margin-right: .2rem;
+/* line 7, ../scss/flex-05.scss */
+section aside ul li {
+  height: 120px;
+  background: #FFF;
+  margin: 0.2rem 0.1rem 0 0;
 }
-/* line 12, ../scss/flex-05.scss */
-ul.sn-flex li:nth-child(2n) {
-  margin-left: .2rem;
+/* line 16, ../scss/flex-05.scss */
+section aside.aside-2 ul li {
+  margin: 0.2rem 0 0 0.1rem;
 }
