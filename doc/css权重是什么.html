@@ -1,0 +1,160 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <title></title>
+<style id="system" type="text/css">h1,h2,h3,h4,h5,h6,p,blockquote {    margin: 0;    padding: 0;}body {    font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", Arial, sans-serif;    font-size: 13px;    line-height: 18px;    color: #737373;    margin: 10px 13px 10px 13px;}a {    color: #0069d6;}a:hover {    color: #0050a3;    text-decoration: none;}a img {    border: none;}p {    margin-bottom: 9px;}h1,h2,h3,h4,h5,h6 {    color: #404040;    line-height: 36px;}h1 {    margin-bottom: 18px;    font-size: 30px;}h2 {    font-size: 24px;}h3 {    font-size: 18px;}h4 {    font-size: 16px;}h5 {    font-size: 14px;}h6 {    font-size: 13px;}hr {    margin: 0 0 19px;    border: 0;    border-bottom: 1px solid #ccc;}blockquote {    padding: 13px 13px 21px 15px;    margin-bottom: 18px;    font-family:georgia,serif;    font-style: italic;}blockquote:before {    content:"C";    font-size:40px;    margin-left:-10px;    font-family:georgia,serif;    color:#eee;}blockquote p {    font-size: 14px;    font-weight: 300;    line-height: 18px;    margin-bottom: 0;    font-style: italic;}code, pre {    font-family: Monaco, Andale Mono, Courier New, monospace;}code {    background-color: #fee9cc;    color: rgba(0, 0, 0, 0.75);    padding: 1px 3px;    font-size: 12px;    -webkit-border-radius: 3px;    -moz-border-radius: 3px;    border-radius: 3px;}pre {    display: block;    padding: 14px;    margin: 0 0 18px;    line-height: 16px;    font-size: 11px;    border: 1px solid #d9d9d9;    white-space: pre-wrap;    word-wrap: break-word;}pre code {    background-color: #fff;    color:#737373;    font-size: 11px;    padding: 0;}@media screen and (min-width: 768px) {    body {        width: 748px;        margin:10px auto;    }}</style><style id="custom" type="text/css"></style></head>
+<body marginheight="0"><h3>css权重是什么？</h3>
+<h4>概述</h4>
+<p><code>css Specificity</code>中文一般译为<code>css</code>优先级、<code>css</code>权重。相比“权重”，“优先级”更好理解，<code>mozilla</code>官方中文文档就翻译为“优先级”。
+
+</p>
+<p><code>Specificity</code>基于设定的匹配规则，浏览器通过设定好的优先级来判断哪些属性值<code>DOM</code>元素最为相关，从而在该<code>DOM</code>上应用这些值。
+
+</p>
+<p>简单理解就是一个<code>DOM</code>的某个属性值有多个<code>css</code>样式设置，优先级高的那个应用。很多<code>css</code>设置不生效的问题，都是因为在某处定义了一个更高的优先级，从而导致该处样式不生效。
+
+</p>
+<p>优先级的顺序如下：
+    important &gt; 内联(style) &gt; ID &gt; 类(class) &gt; 标签(li...) | 伪类(:hover,:focus...) | 属性选择[attr=''] &gt; 伪对象(:before,:after,...) &gt; 通配符(*) &gt; 继承(inherit)
+那么如何确定优先级呢？    
+</p>
+<h4>Specificity值的计算</h4>
+<p>先说结论：
+
+</p>
+<pre><code>一般采用10进制的简单相加计算方式。从0开始，一个行内样式+1000，一个id+100，一个属性选择器/class或者伪类+10，一个元素名，或者伪元素+1.</code></pre>
+<p>具体的css的规则如下：
+
+</p>
+<ul>
+<li>A：如果规则是写在标签的style属性中（内联样式），则A=1，否则，A=0. 对于内联样式，由于没有选择器，所以 B、C、D 的值都为 0，即 A=1, B=0, C=0, D=0（简写为 1,0,0,0，下同）。</li>
+<li>B：计算该选择器中ID的数量。（例如，#header 这样的选择器，计算为 0, 1, 0, 0）。</li>
+<li>C：计算该选择器中伪类及其它属性的数量（包括类选择器、属性选择器等，不包括伪元素）。 （例如， .logo[id='site-logo'] 这样的选择器，计算为 0, 0, 2, 0）。</li>
+<li>D：计算该选择器中伪元素及标签的数量。（例如，p:first-letter 这样的选择器，计算为0, 0, 0, 2）。</li>
+</ul>
+<pre><code class="lang-css">/*通配选择符(Universal Selector)*/     * {} /* a=0 b=0 c=0 d=0 -&gt; specificity = 0,0,0,0 */
+/*类型选择符(Type Selectors)*/          li {} /* a=0 b=0 c=0 d=1 -&gt; specificity = 0,0,0,1 */
+/*类选择符(Class Selectors)*/         .active{color:blue;}/* a=0 b=0 c=1 d=0 -&gt; specificity = 0,0,1,0 */
+/*伪类选择符(Pseudo-classes Selectors)*/li:first-line {} /* a=0 b=0 c=0 d=2 -&gt; specificity = 0,0,0,2 */
+/*属性选择符(Attribute Selectors)*/   h[title] {color:blue;} /* a=0 b=0 c=1 d=0 -&gt; specificity = 0,0,1,0 */
+/*ID选择符(ID Selectors)*/            #sj{ font-size:12px;}  /* a=0 b=1 c=0 d=0 -&gt; specificity = 0,1,0,0 */
+/*内联(style)*/                       style=""                 /* a=1 b=0 c=0 d=0 -&gt; specificity = 1,0,0,0 */
+/*包含选择符(Descendant Selectors)*/  ul li {} /* a=0 b=0 c=0 d=1+1 -&gt; specificity = 0,0,0,2 */
+/*相邻+属性选择符(Adjacent Sibling Selectors)*/ h1 + *[rel=up]{} /* a=0 b=0 c=1 d=1 -&gt; specificity = 0,0,1,1 */
+ul ol li.red {} /* a=0 b=0 c=1 d=3 -&gt; specificity = 0,0,1,3 */
+li.red.level {} /* a=0 b=0 c=2 d=1 -&gt; specificity = 0,0,2,1 */</code></pre>
+<p>大多数情况下，按照以上的理解得出的结论是没问题的，不过总有例外，如
+</p>
+<pre><code class="lang-css">body header div nav ul li div p a span em {color: red}
+.ctn{color:blue}</code></pre>
+<p>按照错误的计算方法，样式一的权重值是11，样式二的权重值是10，如果这两条规则用于同一个元素，则该元素应该是红色。实际结果却是蓝色。
+
+</p>
+<p>因此还有一些基本的规则
+
+</p>
+<h4>优先级的基本规则</h4>
+<p>1.相同的权重：以后面出现的选择器为最后规则
+
+</p>
+<p>假如在外部样式表中，同一个CSS规则你写了两次，那么出现在前面的选择器权重低，你的样式会选择后面的样式：
+</p>
+<pre><code class="lang-css">#content h1 {
+  padding: 5px;
+}
+
+#content h1 {
+  padding: 10px;
+}</code></pre>
+<p>两个选择器的权重都是0，1，0，1，最后那个规则生效。
+
+</p>
+<p>2.不同的权重，权重值高则生效
+
+</p>
+<p>Id选择器的优先级比属性选择器高,比如下面的例子里 样式表中#p123的权重明显比[id=p123]的权重要高。
+</p>
+<pre><code class="lang-css">a#a-02 { background-image : url(n.gif); }
+
+a[id="a-02"] { background-image : url(n.png); }</code></pre>
+<p>3.就近原则
+
+</p>
+<p>如我在样式表中对DOM定义的样式A,然后我又在html也对DOM定义了B,应用B
+</p>
+<pre><code class="lang-css">.A {
+  padding: 5px;
+}</code></pre>
+<pre><code class="lang-html">&lt;style type="text/css"&gt;
+  .B {
+    padding: 10px;
+  }
+&lt;/style&gt;</code></pre>
+<p>4.无论多少个元素组成的选择器，都没有一个class选择器优先级高。
+
+</p>
+<p>就是上面的那个例外。
+
+</p>
+<p>5.无视DOM树的距离
+
+</p>
+<p>如下样式：
+</p>
+<pre><code class="lang-css">body h1 {
+  color: green;
+}
+html h1 {
+  color: purple;
+}</code></pre>
+<p>当它应用在下面的HTML时:
+
+</p>
+<pre><code class="lang-html">&lt;html&gt;
+&lt;body&gt;
+  &lt;h1&gt;Here is a title!&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>浏览器会将它渲染成purple;
+实际上规则1也适用于此，不过由于其DOM负极标签的不同，故单拎出来特殊化。
+
+</p>
+<p>6.:not 伪类例外
+
+</p>
+<p>:not 否定伪类在优先级计算中不会被看作是伪类. 事实上, 在计算选择器数量时还是会把其中的选择器当做普通选择器进行计数.
+
+</p>
+<pre><code class="lang-css">div.outer p {
+  color:orange;
+}
+div:not(.outer) p {
+  color: lime;
+}</code></pre>
+<p>当它被应用在下面的HTML时,就是文字描述效果
+</p>
+<pre><code class="lang-html">&lt;div class="outer"&gt;
+  &lt;p&gt;orange&lt;/p&gt;
+  &lt;div class="inner"&gt;
+    &lt;p&gt;lime&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+<p>7.!important 规则例外
+
+</p>
+<p>当在一个样式声明上使用 !important 规则时，该样式声明会覆盖CSS中任何其他的声明。
+
+</p>
+<p>尽管技术上 !important 与优先级毫无关系，但是它们之间直接相互影响。
+
+</p>
+<p>使用 !important 是一个坏习惯，应该尽量避免，因为这打断了样式表中的固有的级联规则 使得调试找bug变得更加困难了。
+
+</p>
+<p>当两条相互冲突的带有!important 规则的声明被应用到相同的元素上时，拥有更大优先级的声明将会被采用。
+
+</p>
+<p>具体的参考<a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/Specificity#!important_规则例外">!important_规则例外</a>,就不一一粘贴过来了。
+
+</p>
+<p>Edit By <a href="http://mahua.jser.me">MaHua</a></p>
+</body></html>
