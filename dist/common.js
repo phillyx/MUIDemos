@@ -343,6 +343,7 @@ var common =
 		downloadPath:"_downloads/",
 		removePrefix:[]
 	};
+
 	cache.getFile = function(netPath, cb) {
 		var filePathCache = getLocalFileCache(netPath);
 		isExist(filePathCache, function(exist) {
@@ -449,8 +450,9 @@ var common =
 						});
 					}
 				}, function() {
-					cache.options.removePrefix.concat(["filePathCache_","ajax_cache_"]);
-					myStorage.removeItemByKeys(cache.options.removePrefix, function() {
+					var pr=cache.options.removePrefix;
+					pr=pr.concat(["filePathCache_","ajax_cache_"]);
+					myStorage.removeItemByKeys(pr, function() {
 						waiting.setTitle('已清除100%');
 						setTimeout(function() {
 							waiting.close();
