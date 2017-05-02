@@ -117,8 +117,8 @@
 						});
 					}
 				}, function() {
-					var pr=cache.options.removePrefix;
-					pr=pr.concat(["filePathCache_","ajax_cache_"]);
+					var pr=["filePathCache_","ajax_cache_"];
+					pr=pr.concat(cache.options.removePrefix);
 					myStorage.removeItemByKeys(pr, function() {
 						waiting.setTitle('已清除100%');
 						setTimeout(function() {
